@@ -1,39 +1,32 @@
-# Dependencies (both root and nested client/server directories)
-node_modules/
-*/node_modules/
-
-# Production Build Outputs
-dist/
-dist-ssr/
-build/
-*.local
-
-# Environment Variables & Secrets (MongoDB credentials, API keys, etc.)
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-*.env
-
 # Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-*.log
 
-# Editor & System Files
-.DS_Store
-Thumbs.db
-desktop.ini
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.json
-.idea/
-
-# Temporary / Cache Files
-.eslintcache
-.stylelintcache
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 *.tmp
