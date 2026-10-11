@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { 
-  Compass, 
+  Home, 
   Calendar, 
   Briefcase, 
   Layers, 
+  Search, 
   PlusCircle, 
   LogIn, 
   LogOut, 
@@ -21,14 +22,16 @@ export default function Navbar({
   onOpenAuth, 
   onLogout, 
   onOpenSubmitEvent,
-  pendingSubmissionsCount
+  pendingSubmissionsCount,
+  searchQuery,
+  setSearchQuery
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { id: 'home', label: 'Home', icon: Compass },
+    { id: 'home', label: 'Home', icon: Home },
     { id: 'events', label: 'Events', icon: Calendar },
-    { id: 'projects', label: 'Projects & Collab', icon: Briefcase },
+    { id: 'projects', label: 'Projects', icon: Briefcase },
     { id: 'labs', label: 'Labs & Research', icon: Layers },
   ];
 
@@ -40,22 +43,22 @@ export default function Navbar({
   return (
     <header className="navbar-wrapper">
       <div className="container navbar-inner">
-        {/* Brand Logo */}
+        {/* LEFT: Academic Brand */}
         <div className="navbar-brand" onClick={() => handleNavClick('home')}>
           <div className="brand-logo-icon">
-            <GraduationCap size={22} className="text-cyan" />
+            <GraduationCap size={20} className="logo-svg" />
           </div>
           <div className="brand-text-block">
             <div className="brand-title">
-              HCD <span className="brand-accent">CONNECT</span>
+              HCD <span className="brand-title-accent">CONNECT</span>
             </div>
             <div className="brand-subtitle">
-              IIIT Delhi • Dept. of Human-Centered Design
+              IIIT Delhi · Human-Centered Design
             </div>
           </div>
         </div>
 
-        {/* Desktop Navigation Links */}
+        {/* CENTER: Navigation Links with Visible Gaps */}
         <nav className="nav-desktop">
           {navLinks.map((link) => {
             const Icon = link.icon;
@@ -66,8 +69,8 @@ export default function Navbar({
                 onClick={() => handleNavClick(link.id)}
                 className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
               >
-                <Icon size={16} />
-                <span>{link.label}</span>
+                <Icon size={16} className="nav-icon" />
+                <span className="nav-label">{link.label}</span>
               </button>
             );
           })}
@@ -77,8 +80,8 @@ export default function Navbar({
               onClick={() => handleNavClick('admin')}
               className={`nav-link ${activeTab === 'admin' ? 'nav-link-active' : ''} nav-link-admin`}
             >
-              <ShieldCheck size={16} />
-              <span>Admin Hub</span>
+              <ShieldCheck size={16} className="nav-icon" />
+              <span className="nav-label">Admin Hub</span>
               {pendingSubmissionsCount > 0 && (
                 <span className="nav-counter-badge">{pendingSubmissionsCount}</span>
               )}
@@ -86,14 +89,31 @@ export default function Navbar({
           )}
         </nav>
 
-        {/* Desktop Action Buttons */}
+        {/* RIGHT: Search, Submit Event, Auth */}
         <div className="nav-actions-desktop">
+          {/* Quick Search */}
+          <div className="header-search-box">
+            <Search size={14} className="header-search-icon" />
+            <input
+              type="text"
+              placeholder="Search platform..."
+              value={searchQuery || ''}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (activeTab === 'home' && e.target.value.trim() !== '') {
+                  setActiveTab('projects');
+                }
+              }}
+              className="header-search-input"
+            />
+          </div>
+
           <button 
-            className="btn btn-outline-white btn-sm"
+            className="btn btn-navy btn-sm"
             onClick={onOpenSubmitEvent}
             title="Propose an academic event, seminar, or workshop"
           >
-            <PlusCircle size={15} />
+            <PlusCircle size={14} />
             <span>Submit Event</span>
           </button>
 
@@ -113,15 +133,15 @@ export default function Navbar({
                 className="btn-icon-logout"
                 title="Sign Out"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
               </button>
             </div>
           ) : (
             <button 
-              className="btn btn-accent btn-sm"
+              className="btn btn-primary btn-sm"
               onClick={onOpenAuth}
             >
-              <LogIn size={15} />
+              <LogIn size={14} />
               <span>Sign In / Register</span>
             </button>
           )}
@@ -133,7 +153,7 @@ export default function Navbar({
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle navigation menu"
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
@@ -141,6 +161,17 @@ export default function Navbar({
       {mobileMenuOpen && (
         <div className="nav-mobile-drawer">
           <div className="container mobile-drawer-inner">
+            <div className="mobile-search-row">
+              <Search size={16} className="text-light" />
+              <input
+                type="text"
+                placeholder="Search events, projects, labs..."
+                value={searchQuery || ''}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="mobile-search-input"
+              />
+            </div>
+
             <div className="mobile-nav-links">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -170,7 +201,7 @@ export default function Navbar({
 
             <div className="mobile-drawer-footer">
               <button 
-                className="btn btn-primary btn-sm btn-full"
+                className="btn btn-navy btn-full"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onOpenSubmitEvent();
@@ -199,7 +230,7 @@ export default function Navbar({
                 </div>
               ) : (
                 <button 
-                  className="btn btn-accent btn-full"
+                  className="btn btn-primary btn-full"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     onOpenAuth();

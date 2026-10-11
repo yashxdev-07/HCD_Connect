@@ -1,99 +1,99 @@
 import React from 'react';
-import { MapPin, Mail, Phone, ExternalLink, GraduationCap, ShieldAlert } from 'lucide-react';
+import { MapPin, Mail, Phone, GraduationCap, ShieldAlert, ExternalLink } from 'lucide-react';
 
 export default function Footer({ onSwitchTab }) {
   return (
     <footer className="footer-wrapper">
       <div className="container footer-content">
         <div className="footer-grid">
-          {/* Col 1: About Department */}
-          <div className="footer-col">
+          {/* COLUMN 1: Logo & Platform Mission */}
+          <div className="footer-col footer-col-brand">
             <div className="footer-brand">
-              <GraduationCap size={24} className="text-cyan" />
-              <h3>HCD CONNECT</h3>
+              <div className="brand-logo-icon">
+                <GraduationCap size={20} className="logo-svg" />
+              </div>
+              <div className="brand-text-block">
+                <span className="brand-title">HCD CONNECT</span>
+                <span className="brand-subtitle">IIIT Delhi</span>
+              </div>
             </div>
             <p className="footer-desc">
-              Central hub for events, research labs, undergraduate & graduate capstone projects, 
-              and interdisciplinary collaboration at the Department of Human-Centered Design, 
-              IIIT Delhi.
+              The collaborative research and discovery platform for the Department of Human-Centered Design at IIIT Delhi. Connecting undergraduate, graduate, and faculty researchers across computing and design disciplines.
             </p>
-            <div className="demo-notice-box">
-              <ShieldAlert size={16} className="text-amber" />
+            <div className="footer-demo-callout">
+              <ShieldAlert size={14} className="flex-shrink-0 text-amber" />
               <span>
-                Demo data items are clearly tagged. Real departmental listings are marked with the Verified badge.
+                Demonstration data is clearly labeled. Official records are marked with the Verified badge.
               </span>
             </div>
           </div>
 
-          {/* Col 2: Quick Links */}
+          {/* COLUMN 2: Quick Links */}
           <div className="footer-col">
-            <h4 className="footer-heading">Portals & Navigation</h4>
+            <h4 className="footer-heading">Quick Links</h4>
             <ul className="footer-links">
               <li>
-                <button onClick={() => onSwitchTab('home')}>Department Overview</button>
+                <button type="button" onClick={() => onSwitchTab('home')}>Home</button>
               </li>
               <li>
-                <button onClick={() => onSwitchTab('events')}>Academic & Club Events</button>
+                <button type="button" onClick={() => onSwitchTab('events')}>Events & Activities</button>
               </li>
               <li>
-                <button onClick={() => onSwitchTab('projects')}>Projects & Call for Collaborators</button>
+                <button type="button" onClick={() => onSwitchTab('projects')}>Projects & Collaboration</button>
               </li>
               <li>
-                <button onClick={() => onSwitchTab('labs')}>Research Labs & Facilities</button>
+                <button type="button" onClick={() => onSwitchTab('labs')}>Labs & Research</button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Academic Programs */}
+          {/* COLUMN 3: Platform Information */}
           <div className="footer-col">
-            <h4 className="footer-heading">HCD Programs at IIITD</h4>
+            <h4 className="footer-heading">Platform Info</h4>
             <ul className="footer-links">
               <li>
-                <a href="https://iiitd.ac.in" target="_blank" rel="noopener noreferrer">
-                  B.Tech in Computer Science & Design (CS+D) <ExternalLink size={12} />
-                </a>
+                <button type="button" onClick={() => onSwitchTab('home')}>About HCD Connect</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => onSwitchTab('projects')}>Research Opportunities</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => onSwitchTab('projects')}>Collaboration Guidelines</button>
               </li>
               <li>
                 <a href="https://iiitd.ac.in" target="_blank" rel="noopener noreferrer">
-                  Master of Design (M.Des in HCD) <ExternalLink size={12} />
-                </a>
-              </li>
-              <li>
-                <a href="https://iiitd.ac.in" target="_blank" rel="noopener noreferrer">
-                  Ph.D. in Human-Centered Design <ExternalLink size={12} />
-                </a>
-              </li>
-              <li>
-                <a href="https://iiitd.ac.in" target="_blank" rel="noopener noreferrer">
-                  Design Summer Internships & Visiting Fellowships <ExternalLink size={12} />
+                  IIIT Delhi Main Portal <ExternalLink size={12} className="meta-inline-icon" />
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Campus Contact */}
+          {/* COLUMN 4: Department Information */}
           <div className="footer-col">
-            <h4 className="footer-heading">Department Location</h4>
+            <h4 className="footer-heading">Department Information</h4>
             <div className="footer-contact-item">
-              <MapPin size={16} className="contact-icon" />
+              <MapPin size={15} className="contact-icon flex-shrink-0" />
               <span>
-                R&D Building & Academic Block, IIIT Delhi, Okhla Industrial Estate Phase III, New Delhi - 110020
+                Dept. of Human-Centered Design, R&D Building, IIIT-Delhi, Okhla Phase III, New Delhi - 110020
               </span>
             </div>
             <div className="footer-contact-item">
-              <Mail size={16} className="contact-icon" />
-              <span>hcd-office@iiitd.ac.in</span>
+              <Mail size={15} className="contact-icon flex-shrink-0" />
+              <a href="mailto:hcd-office@iiitd.ac.in" className="footer-contact-link">
+                hcd-office@iiitd.ac.in
+              </a>
             </div>
             <div className="footer-contact-item">
-              <Phone size={16} className="contact-icon" />
+              <Phone size={15} className="contact-icon flex-shrink-0" />
               <span>+91-11-26907400</span>
             </div>
           </div>
         </div>
 
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Department of Human-Centered Design, Indraprastha Institute of Information Technology Delhi (IIIT-Delhi). All rights reserved.</p>
-          <p className="footer-credits">Crafted for IIITD Students, Researchers & Faculty Pairings</p>
+        {/* BOTTOM DIVIDER & COPYRIGHT */}
+        <div className="footer-bottom-bar">
+          <p>© {new Date().getFullYear()} Department of Human-Centered Design, IIIT Delhi. All rights reserved.</p>
+          <p className="footer-credits">Academic Research & Discovery Portal</p>
         </div>
       </div>
     </footer>

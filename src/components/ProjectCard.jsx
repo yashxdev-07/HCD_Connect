@@ -8,8 +8,7 @@ import {
   ArrowRight,
   Layers,
   Users,
-  Clock,
-  Sparkles
+  Clock
 } from 'lucide-react';
 
 export default function ProjectCard({ project, onOpenCollab, onSelectProject }) {
@@ -29,60 +28,82 @@ export default function ProjectCard({ project, onOpenCollab, onSelectProject }) 
   };
 
   return (
-    <div className="card project-card">
-      {/* Top Bar */}
-      <div className="card-top-bar">
+    <article className="academic-card project-academic-card">
+      {/* 1. TOP ROW: Status and Verification */}
+      <div className="card-top-row">
         {getStatusBadge(project.status)}
         {isDemo ? (
-          <span className="badge badge-demo" title="Unverified demonstration project">
-            <AlertCircle size={12} className="badge-icon-left" />
+          <span className="badge badge-demo" title="Demonstration Project Record">
+            <AlertCircle size={12} className="flex-shrink-0" />
             <span>Demo Data</span>
           </span>
         ) : (
-          <span className="badge badge-verified" title="Verified IIITD HCD Research Project">
-            <CheckCircle size={12} className="badge-icon-left" />
-            <span>Verified</span>
+          <span className="badge badge-verified" title="Verified IIITD Department Project">
+            <CheckCircle size={12} className="flex-shrink-0" />
+            <span>Verified Project</span>
           </span>
         )}
       </div>
 
-      {/* Project Title */}
-      <h3 className="project-title" onClick={() => onSelectProject(project)}>
+      {/* 2. TITLE */}
+      <h3 className="card-heading" onClick={() => onSelectProject(project)}>
         {project.title}
       </h3>
 
-      {/* Research Domain Pill */}
-      <div className="project-meta-row">
-        <Layers size={14} className="text-accent flex-shrink-0" />
-        <span className="project-domain-label">{project.researchArea}</span>
+      {/* 3. RESEARCH AREA */}
+      <div className="card-domain-row">
+        <span className="badge badge-category">
+          <Layers size={12} className="flex-shrink-0" />
+          <span>{project.researchArea}</span>
+        </span>
       </div>
 
-      {/* Project Description */}
-      <p className="card-desc">{project.description}</p>
+      {/* 4. DESCRIPTION (Line Clamped) */}
+      <p className="card-description-clamped" title={project.description}>
+        {project.description}
+      </p>
 
-      {/* Supervisor Details Box */}
-      <div className="supervisor-box">
-        <div className="supervisor-meta">
-          <User size={14} className="text-muted flex-shrink-0" />
-          <span className="supervisor-label">Faculty PI:</span>
-          <span className="supervisor-name">{project.supervisor}</span>
+      {/* 5. METADATA ROWS: Faculty, Contact, Positions, Duration */}
+      <div className="card-metadata-list">
+        <div className="metadata-row">
+          <User size={14} className="metadata-icon" />
+          <span className="metadata-label">Supervisor:</span>
+          <span className="metadata-value-strong">{project.supervisor}</span>
         </div>
-        <div className="supervisor-email-row">
+
+        <div className="metadata-row">
+          <Mail size={14} className="metadata-icon" />
+          <span className="metadata-label">Contact:</span>
           <a 
             href={`mailto:${project.supervisorEmail}?subject=Inquiry regarding HCD Project: ${encodeURIComponent(project.title)}`}
-            className="contact-email-link"
+            className="metadata-email-link"
             title={`Email ${project.supervisor}`}
           >
-            <Mail size={13} className="flex-shrink-0" />
-            <span className="email-address-text">{project.supervisorEmail}</span>
+            {project.supervisorEmail}
           </a>
         </div>
+
+        {project.openRoles && (
+          <div className="metadata-row">
+            <Users size={14} className="metadata-icon" />
+            <span className="metadata-label">Positions:</span>
+            <span className="metadata-value">{project.openRoles}</span>
+          </div>
+        )}
+
+        {project.duration && (
+          <div className="metadata-row">
+            <Clock size={14} className="metadata-icon" />
+            <span className="metadata-label">Duration:</span>
+            <span className="metadata-value">{project.duration}</span>
+          </div>
+        )}
       </div>
 
-      {/* Required Skills & Technologies */}
-      <div className="skills-section">
-        <span className="skills-heading">Skills & Technologies:</span>
-        <div className="skills-tags">
+      {/* 6. SKILLS: Individual Tags */}
+      <div className="card-skills-section">
+        <span className="skills-section-label">Required Skills & Tech:</span>
+        <div className="skills-chip-list">
           {project.skillsRequired.map((skill, idx) => (
             <span key={idx} className="skill-chip">
               {skill}
@@ -91,42 +112,28 @@ export default function ProjectCard({ project, onOpenCollab, onSelectProject }) 
         </div>
       </div>
 
-      {/* Dedicated Roles Callout Banner (Separated from buttons to prevent text crushing) */}
-      <div className="project-roles-callout">
-        <Users size={14} className="text-accent flex-shrink-0" />
-        <div className="roles-callout-text">
-          <span className="roles-label">Positions:</span> {project.openRoles}
-        </div>
-      </div>
-
-      {/* Card Footer: Timeline on Left, Actions on Right */}
-      <div className="card-footer">
-        <div className="project-timeline-meta" title={project.duration}>
-          <Clock size={13} className="text-muted flex-shrink-0" />
-          <span className="timeline-text">{project.duration.split('(')[0].trim()}</span>
-        </div>
-
-        <div className="card-actions">
-          {project.status !== 'Closed' && (
-            <button
-              onClick={() => onOpenCollab(project)}
-              className="btn btn-accent btn-sm"
-              title="Submit expression of interest to join this research team"
-            >
-              <Send size={13} />
-              <span>Collaborate</span>
-            </button>
-          )}
-
-          <button 
-            onClick={() => onSelectProject(project)}
-            className="btn btn-secondary btn-sm"
+      {/* 7. BOTTOM ACTIONS */}
+      <div className="card-bottom-actions">
+        {project.status !== 'Closed' && (
+          <button
+            onClick={() => onOpenCollab(project)}
+            className="btn btn-primary btn-sm"
+            title="Submit expression of interest to join this project"
           >
-            <span>Details</span>
-            <ArrowRight size={13} />
+            <Send size={13} />
+            <span>Collaborate</span>
           </button>
-        </div>
+        )}
+
+        <button 
+          onClick={() => onSelectProject(project)}
+          className="btn btn-secondary btn-sm"
+          title="View detailed project brief"
+        >
+          <span>View Details</span>
+          <ArrowRight size={13} />
+        </button>
       </div>
-    </div>
+    </article>
   );
 }

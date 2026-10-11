@@ -15,117 +15,141 @@ import {
 export default function EventCard({ event, onRsvpToggle, onSelectEvent }) {
   const isDemo = !event.isVerified || event.isDemo;
 
+  // Derive scheduled status from date (Current date context: 2026-10-11)
+  const getScheduledStatus = (dateStr) => {
+    try {
+      const todayStr = '2026-10-11';
+      if (dateStr > todayStr) {
+        return { label: 'Upcoming', badgeClass: 'badge-upcoming' };
+      } else if (dateStr === todayStr) {
+        return { label: 'Ongoing (Scheduled)', badgeClass: 'badge-ongoing' };
+      } else {
+        return { label: 'Completed', badgeClass: 'badge-completed' };
+      }
+    } catch {
+      return { label: 'Scheduled', badgeClass: 'badge-upcoming' };
+    }
+  };
+
+  const statusInfo = getScheduledStatus(event.date);
+
   return (
-    <div className={`card event-card ${event.featured ? 'card-featured' : ''}`}>
-      {/* Top Meta Badges */}
-      <div className="card-top-bar">
-        <span className="badge badge-category">{event.category}</span>
+    <article className="academic-card event-academic-card">
+      {/* 1. TOP ROW: Category, Scheduled Status, Verification */}
+      <div className="card-top-row">
+        <div className="card-top-left-badges">
+          <span className="badge badge-category">{event.category}</span>
+          <span className={`badge ${statusInfo.badgeClass}`}>
+            ● {statusInfo.label}
+          </span>
+        </div>
+
         {isDemo ? (
-          <span className="badge badge-demo" title="Unverified demonstration record">
-            <AlertCircle size={12} className="badge-icon-left" />
+          <span className="badge badge-demo" title="Demonstration Event Record">
+            <AlertCircle size={12} className="flex-shrink-0" />
             <span>Demo Data</span>
           </span>
         ) : (
-          <span className="badge badge-verified" title="Verified by IIITD HCD Department">
-            <CheckCircle size={12} className="badge-icon-left" />
-            <span>Verified Event</span>
+          <span className="badge badge-verified" title="Verified IIITD Department Event">
+            <CheckCircle size={12} className="flex-shrink-0" />
+            <span>Verified</span>
           </span>
         )}
       </div>
 
-      {/* Title & Description */}
-      <h3 className="event-title" onClick={() => onSelectEvent(event)}>
+      {/* 2. TITLE */}
+      <h3 className="card-heading" onClick={() => onSelectEvent(event)}>
         {event.title}
       </h3>
-      <p className="card-desc">{event.description}</p>
 
-      {/* Date, Time, Venue Block */}
-      <div className="event-logistics">
-        <div className="logistic-item">
-          <Calendar size={14} className="logistics-icon text-accent flex-shrink-0" />
-          <span className="logistic-text">{event.date}</span>
+      {/* 3. LOGISTICS ROW: Date, Time, Room */}
+      <div className="card-logistics-box">
+        <div className="logistics-item">
+          <Calendar size={14} className="logistics-icon text-accent" />
+          <span className="logistics-value">{event.date}</span>
         </div>
-        <div className="logistic-item">
-          <Clock size={14} className="logistics-icon text-accent flex-shrink-0" />
-          <span className="logistic-text">{event.time}</span>
+        <div className="logistics-item">
+          <Clock size={14} className="logistics-icon text-accent" />
+          <span className="logistics-value">{event.time}</span>
         </div>
-        <div className="logistic-item logistic-room">
-          <MapPin size={14} className="logistics-icon text-accent flex-shrink-0" />
-          <span className="logistic-text room-name">{event.room}</span>
+        <div className="logistics-item">
+          <MapPin size={14} className="logistics-icon text-accent" />
+          <span className="logistics-value venue-room-text">{event.room}</span>
         </div>
       </div>
 
-      {/* Contact Details: Faculty & TA */}
-      <div className="event-contacts-box">
-        <div className="contact-row">
-          <User size={13} className="text-muted flex-shrink-0" />
-          <div className="contact-info">
-            <span className="contact-label">Faculty:</span>
-            <span className="contact-name">{event.facultyContact.name}</span>
-            <a 
-              href={`mailto:${event.facultyContact.email}?subject=Question regarding ${encodeURIComponent(event.title)}`} 
-              className="contact-email-link"
-              title={`Email ${event.facultyContact.name}`}
-            >
-              <Mail size={12} className="flex-shrink-0" />
-              <span className="sr-only-text">Email</span>
-            </a>
-          </div>
+      {/* 4. DESCRIPTION (Line Clamped) */}
+      <p className="card-description-clamped" title={event.description}>
+        {event.description}
+      </p>
+
+      {/* 5. CONTACTS: Faculty & TA */}
+      <div className="card-metadata-list">
+        <div className="metadata-row">
+          <User size={14} className="metadata-icon" />
+          <span className="metadata-label">Organizer:</span>
+          <span className="metadata-value-strong">{event.facultyContact.name}</span>
+          <a 
+            href={`mailto:${event.facultyContact.email}?subject=Question regarding ${encodeURIComponent(event.title)}`}
+            className="metadata-email-link"
+            title={`Email ${event.facultyContact.name}`}
+          >
+            <Mail size={13} className="flex-shrink-0" />
+            <span className="sr-only-text">Email</span>
+          </a>
         </div>
 
         {event.taContact && (
-          <div className="contact-row">
-            <User size={13} className="text-muted flex-shrink-0" />
-            <div className="contact-info">
-              <span className="contact-label">TA:</span>
-              <span className="contact-name">{event.taContact.name}</span>
-              <a 
-                href={`mailto:${event.taContact.email}?subject=TA Inquiry: ${encodeURIComponent(event.title)}`} 
-                className="contact-email-link"
-                title={`Email ${event.taContact.name}`}
-              >
-                <Mail size={12} className="flex-shrink-0" />
-                <span className="sr-only-text">Email</span>
-              </a>
-            </div>
+          <div className="metadata-row">
+            <User size={14} className="metadata-icon" />
+            <span className="metadata-label">TA Contact:</span>
+            <span className="metadata-value">{event.taContact.name}</span>
+            <a 
+              href={`mailto:${event.taContact.email}?subject=TA Inquiry: ${encodeURIComponent(event.title)}`}
+              className="metadata-email-link"
+              title={`Email ${event.taContact.name}`}
+            >
+              <Mail size={13} className="flex-shrink-0" />
+              <span className="sr-only-text">Email</span>
+            </a>
           </div>
         )}
       </div>
 
-      {/* Card Footer: Attendees & Action buttons */}
-      <div className="card-footer">
-        <div className="attendees-counter">
-          <Users size={14} className="text-muted flex-shrink-0" />
-          <span className="attendees-text">
+      {/* 6. BOTTOM ACTIONS & RSVP */}
+      <div className="card-bottom-actions">
+        <div className="event-seats-meta">
+          <Users size={14} className="text-light flex-shrink-0" />
+          <span className="seats-count-text">
             <strong>{event.attendeesCount}</strong> / {event.capacity} seats
           </span>
         </div>
 
-        <div className="card-actions">
+        <div className="card-action-group">
           <button
             onClick={() => onRsvpToggle(event.id)}
             className={`btn btn-sm ${event.isRsvp ? 'btn-success' : 'btn-primary'}`}
           >
             {event.isRsvp ? (
               <>
-                <BookmarkCheck size={14} />
+                <BookmarkCheck size={13} />
                 <span>RSVPed</span>
               </>
             ) : (
               <span>RSVP</span>
             )}
           </button>
-          
+
           <button 
             onClick={() => onSelectEvent(event)} 
             className="btn btn-secondary btn-sm"
-            title="View complete event brief"
+            title="View full event details"
           >
-            <span>Details</span>
+            <span>View Details</span>
             <ArrowRight size={13} />
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
