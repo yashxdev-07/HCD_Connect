@@ -2,12 +2,13 @@ import React from 'react';
 import { 
   User, 
   Mail, 
-  Tag, 
   CheckCircle, 
   AlertCircle, 
   Send, 
   ArrowRight,
   Layers,
+  Users,
+  Clock,
   Sparkles
 } from 'lucide-react';
 
@@ -34,13 +35,13 @@ export default function ProjectCard({ project, onOpenCollab, onSelectProject }) 
         {getStatusBadge(project.status)}
         {isDemo ? (
           <span className="badge badge-demo" title="Unverified demonstration project">
-            <AlertCircle size={12} />
-            Demo Data
+            <AlertCircle size={12} className="badge-icon-left" />
+            <span>Demo Data</span>
           </span>
         ) : (
           <span className="badge badge-verified" title="Verified IIITD HCD Research Project">
-            <CheckCircle size={12} />
-            Verified
+            <CheckCircle size={12} className="badge-icon-left" />
+            <span>Verified</span>
           </span>
         )}
       </div>
@@ -50,34 +51,37 @@ export default function ProjectCard({ project, onOpenCollab, onSelectProject }) 
         {project.title}
       </h3>
 
-      {/* Research Domain */}
+      {/* Research Domain Pill */}
       <div className="project-meta-row">
-        <Layers size={14} className="text-accent" />
+        <Layers size={14} className="text-accent flex-shrink-0" />
         <span className="project-domain-label">{project.researchArea}</span>
       </div>
 
+      {/* Project Description */}
       <p className="card-desc">{project.description}</p>
 
-      {/* Supervisor Details */}
+      {/* Supervisor Details Box */}
       <div className="supervisor-box">
         <div className="supervisor-meta">
-          <User size={14} className="text-muted" />
+          <User size={14} className="text-muted flex-shrink-0" />
           <span className="supervisor-label">Faculty PI:</span>
           <span className="supervisor-name">{project.supervisor}</span>
         </div>
-        <a 
-          href={`mailto:${project.supervisorEmail}?subject=Inquiry regarding HCD Project: ${encodeURIComponent(project.title)}`}
-          className="contact-email-link"
-          title={`Email ${project.supervisor}`}
-        >
-          <Mail size={13} />
-          <span>{project.supervisorEmail}</span>
-        </a>
+        <div className="supervisor-email-row">
+          <a 
+            href={`mailto:${project.supervisorEmail}?subject=Inquiry regarding HCD Project: ${encodeURIComponent(project.title)}`}
+            className="contact-email-link"
+            title={`Email ${project.supervisor}`}
+          >
+            <Mail size={13} className="flex-shrink-0" />
+            <span className="email-address-text">{project.supervisorEmail}</span>
+          </a>
+        </div>
       </div>
 
-      {/* Required Skills Chips */}
+      {/* Required Skills & Technologies */}
       <div className="skills-section">
-        <span className="skills-heading">Skills Needed:</span>
+        <span className="skills-heading">Skills & Technologies:</span>
         <div className="skills-tags">
           {project.skillsRequired.map((skill, idx) => (
             <span key={idx} className="skill-chip">
@@ -87,10 +91,19 @@ export default function ProjectCard({ project, onOpenCollab, onSelectProject }) 
         </div>
       </div>
 
-      {/* Card Footer */}
+      {/* Dedicated Roles Callout Banner (Separated from buttons to prevent text crushing) */}
+      <div className="project-roles-callout">
+        <Users size={14} className="text-accent flex-shrink-0" />
+        <div className="roles-callout-text">
+          <span className="roles-label">Positions:</span> {project.openRoles}
+        </div>
+      </div>
+
+      {/* Card Footer: Timeline on Left, Actions on Right */}
       <div className="card-footer">
-        <div className="project-roles-info">
-          <span className="roles-text">{project.openRoles}</span>
+        <div className="project-timeline-meta" title={project.duration}>
+          <Clock size={13} className="text-muted flex-shrink-0" />
+          <span className="timeline-text">{project.duration.split('(')[0].trim()}</span>
         </div>
 
         <div className="card-actions">

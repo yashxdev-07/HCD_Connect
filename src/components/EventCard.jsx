@@ -22,13 +22,13 @@ export default function EventCard({ event, onRsvpToggle, onSelectEvent }) {
         <span className="badge badge-category">{event.category}</span>
         {isDemo ? (
           <span className="badge badge-demo" title="Unverified demonstration record">
-            <AlertCircle size={12} />
-            Demo Data
+            <AlertCircle size={12} className="badge-icon-left" />
+            <span>Demo Data</span>
           </span>
         ) : (
           <span className="badge badge-verified" title="Verified by IIITD HCD Department">
-            <CheckCircle size={12} />
-            Verified Event
+            <CheckCircle size={12} className="badge-icon-left" />
+            <span>Verified Event</span>
           </span>
         )}
       </div>
@@ -39,51 +39,53 @@ export default function EventCard({ event, onRsvpToggle, onSelectEvent }) {
       </h3>
       <p className="card-desc">{event.description}</p>
 
-      {/* Date, Time, Venue Pills */}
+      {/* Date, Time, Venue Block */}
       <div className="event-logistics">
         <div className="logistic-item">
-          <Calendar size={14} className="logistics-icon text-accent" />
-          <span>{event.date}</span>
+          <Calendar size={14} className="logistics-icon text-accent flex-shrink-0" />
+          <span className="logistic-text">{event.date}</span>
         </div>
         <div className="logistic-item">
-          <Clock size={14} className="logistics-icon text-accent" />
-          <span>{event.time}</span>
+          <Clock size={14} className="logistics-icon text-accent flex-shrink-0" />
+          <span className="logistic-text">{event.time}</span>
         </div>
         <div className="logistic-item logistic-room">
-          <MapPin size={14} className="logistics-icon text-accent" />
-          <span>{event.room}</span>
+          <MapPin size={14} className="logistics-icon text-accent flex-shrink-0" />
+          <span className="logistic-text room-name">{event.room}</span>
         </div>
       </div>
 
       {/* Contact Details: Faculty & TA */}
       <div className="event-contacts-box">
         <div className="contact-row">
-          <User size={13} className="text-muted" />
+          <User size={13} className="text-muted flex-shrink-0" />
           <div className="contact-info">
-            <span className="contact-label">Faculty: </span>
+            <span className="contact-label">Faculty:</span>
             <span className="contact-name">{event.facultyContact.name}</span>
             <a 
-              href={`mailto:${event.facultyContact.email}`} 
+              href={`mailto:${event.facultyContact.email}?subject=Question regarding ${encodeURIComponent(event.title)}`} 
               className="contact-email-link"
               title={`Email ${event.facultyContact.name}`}
             >
-              <Mail size={12} />
+              <Mail size={12} className="flex-shrink-0" />
+              <span className="sr-only-text">Email</span>
             </a>
           </div>
         </div>
 
         {event.taContact && (
           <div className="contact-row">
-            <User size={13} className="text-muted" />
+            <User size={13} className="text-muted flex-shrink-0" />
             <div className="contact-info">
-              <span className="contact-label">TA: </span>
+              <span className="contact-label">TA:</span>
               <span className="contact-name">{event.taContact.name}</span>
               <a 
-                href={`mailto:${event.taContact.email}`} 
+                href={`mailto:${event.taContact.email}?subject=TA Inquiry: ${encodeURIComponent(event.title)}`} 
                 className="contact-email-link"
                 title={`Email ${event.taContact.name}`}
               >
-                <Mail size={12} />
+                <Mail size={12} className="flex-shrink-0" />
+                <span className="sr-only-text">Email</span>
               </a>
             </div>
           </div>
@@ -93,8 +95,8 @@ export default function EventCard({ event, onRsvpToggle, onSelectEvent }) {
       {/* Card Footer: Attendees & Action buttons */}
       <div className="card-footer">
         <div className="attendees-counter">
-          <Users size={14} className="text-muted" />
-          <span>
+          <Users size={14} className="text-muted flex-shrink-0" />
+          <span className="attendees-text">
             <strong>{event.attendeesCount}</strong> / {event.capacity} seats
           </span>
         </div>

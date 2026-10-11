@@ -7,9 +7,9 @@ import {
   Cpu, 
   CheckCircle, 
   AlertCircle, 
-  ArrowRight,
-  ShieldCheck,
-  Users
+  ArrowRight, 
+  ShieldCheck, 
+  Users 
 } from 'lucide-react';
 
 export default function LabCard({ lab, onSelectLab }) {
@@ -22,13 +22,13 @@ export default function LabCard({ lab, onSelectLab }) {
         <span className="lab-code-badge">{lab.code}</span>
         {isDemo ? (
           <span className="badge badge-demo" title={lab.verificationNote}>
-            <AlertCircle size={12} />
-            Demo Data
+            <AlertCircle size={12} className="badge-icon-left" />
+            <span>Demo Data</span>
           </span>
         ) : (
           <span className="badge badge-verified" title={lab.verificationNote}>
-            <ShieldCheck size={12} />
-            Verified Facility
+            <ShieldCheck size={12} className="badge-icon-left" />
+            <span>Verified Facility</span>
           </span>
         )}
       </div>
@@ -38,28 +38,32 @@ export default function LabCard({ lab, onSelectLab }) {
         {lab.name}
       </h3>
 
-      {/* Room & Director */}
+      {/* Campus Location */}
       <div className="lab-location-row">
-        <MapPin size={14} className="text-accent" />
-        <span>{lab.room}</span>
+        <MapPin size={14} className="text-accent flex-shrink-0" />
+        <span className="room-name">{lab.room}</span>
       </div>
 
+      {/* Director & Role */}
       <div className="lab-director-box">
-        <User size={14} className="text-muted" />
+        <User size={14} className="text-muted flex-shrink-0" />
         <div className="director-text">
-          <span className="director-label">Director: </span>
-          <span className="director-name">{lab.director}</span>
-          <span className="director-role-sub">({lab.directorRole})</span>
+          <div className="director-primary">
+            <span className="director-label">Director:</span>
+            <span className="director-name">{lab.director}</span>
+          </div>
+          <span className="director-role-sub">{lab.directorRole}</span>
         </div>
       </div>
 
+      {/* Research Description */}
       <p className="card-desc">{lab.description}</p>
 
       {/* Equipment Highlights */}
       <div className="lab-equipment-section">
         <div className="equipment-header">
-          <Cpu size={14} className="text-accent" />
-          <span>Key Equipment & Tools:</span>
+          <Cpu size={14} className="text-accent flex-shrink-0" />
+          <span>Key Equipment & Infrastructure:</span>
         </div>
         <div className="equipment-chips">
           {lab.equipment.slice(0, 3).map((item, idx) => (
@@ -78,7 +82,7 @@ export default function LabCard({ lab, onSelectLab }) {
       {/* Footer */}
       <div className="card-footer">
         <div className="lab-stats">
-          <Users size={13} className="text-muted" />
+          <Users size={13} className="text-muted flex-shrink-0" />
           <span>{lab.studentCount} Active Researchers</span>
         </div>
 
