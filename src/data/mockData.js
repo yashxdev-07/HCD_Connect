@@ -1243,3 +1243,219 @@ export const DEMO_USERS = [
     "avatar": "HA"
   }
 ];
+
+/**
+ * ROOM_DATA — Central source of truth for the Room Information page.
+ *
+ * Lab names and room numbers are taken VERBATIM from the physical directory
+ * signboard (Center for Design & New Media / TCS Foundation board) visible
+ * in the uploaded photographs.
+ *
+ * Faculty room numbers come from hcd.iiitd.ac.in directory — NOT from photos.
+ * Those entries are marked positionVerified: false.
+ *
+ * Status is NOT connected to a live data source. All entries carry
+ * statusSource: 'none' so the UI shows "Status unavailable" honestly.
+ *
+ * MAP ORIENTATION (derived from uploaded photos/videos):
+ *   Entrance → bottom-right. Walk LEFT along corridor.
+ *   Upper/north side: Labs. Lower/south side: Faculty offices.
+ *   Teal pillar is near the entrance lobby.
+ *   Directory board is on the left wall just inside the entrance.
+ */
+export const ROOM_DATA = [
+  // ── VERIFIED LABS from physical directory signboard ────────────────
+  {
+    id: "room-hmi",
+    type: "lab",
+    name: "Human-Machine Interaction (HMI) Lab",
+    shortName: "HMI Lab",
+    roomNumber: "A-413",
+    category: "Laboratory",
+    description: "Investigates novel interaction mechanisms for human-machine cooperation, including affective computing, social robotics and ubiquitous computing.",
+    descriptionSource: "hcd.iiitd.ac.in lab pages",
+    director: "Dr. Jainendra Shukla",
+    directorVerified: true,
+    email: null,
+    emailVerified: false,
+    mapCol: 0, mapRow: 0,
+    positionVerified: false,
+    positionNote: "Approximate — first lab visible from entrance",
+    statusSource: "none",
+    status: null,
+    tags: ["Affective Computing", "Social Robotics", "HCI"],
+    fromDirectory: true
+  },
+  {
+    id: "room-midas",
+    type: "lab",
+    name: "Multimodal Digital Media Analysis (MIDAS) Lab",
+    shortName: "MIDAS Lab",
+    roomNumber: "A-415",
+    category: "Laboratory",
+    description: "Research group building multimodal AI systems for society using NLP, speech processing and computer vision.",
+    descriptionSource: "hcd.iiitd.ac.in lab pages",
+    director: "Dr. Rajiv Ratn Shah",
+    directorVerified: true,
+    email: null,
+    emailVerified: false,
+    mapCol: 1, mapRow: 0,
+    positionVerified: false,
+    positionNote: "Approximate — second lab along corridor",
+    statusSource: "none",
+    status: null,
+    tags: ["NLP", "Computer Vision", "Speech Processing"],
+    fromDirectory: true
+  },
+  {
+    id: "room-weave",
+    type: "lab",
+    name: "Weave Lab",
+    shortName: "Weave Lab",
+    roomNumber: "A-416",
+    category: "Laboratory",
+    description: "Creative Interfaces and Extended Reality research space. Listed as 'Weave Lab' on the physical directory signboard.",
+    descriptionSource: "Physical directory signboard",
+    director: null,
+    directorVerified: false,
+    email: null,
+    emailVerified: false,
+    mapCol: 2, mapRow: 0,
+    positionVerified: false,
+    positionNote: "Approximate — third lab along corridor",
+    statusSource: "none",
+    status: null,
+    tags: ["Creative Interfaces", "XR"],
+    fromDirectory: true
+  },
+  {
+    id: "room-aid-living",
+    type: "lab",
+    name: "AID Lab · Living Lab",
+    shortName: "AID / Living",
+    roomNumber: "A-418",
+    category: "Laboratory",
+    description: "Accessibility and Inclusive Design Lab (AID Lab) and Living Lab — both listed under A-418 on the physical directory sign. Physical separation unverified.",
+    descriptionSource: "Physical directory signboard (both listed as A-418)",
+    director: "Dr. Richa Gupta (AID Lab)",
+    directorVerified: true,
+    email: "richa.gupta@iiitd.ac.in",
+    emailVerified: true,
+    mapCol: 3, mapRow: 0,
+    positionVerified: false,
+    positionNote: "Approximate — shares A-418 per directory. AID Lab and Living Lab both listed at this number.",
+    statusSource: "none",
+    status: null,
+    tags: ["Inclusive Design", "Accessibility", "Living Lab"],
+    fromDirectory: true,
+    sharedRoomNote: "Both AID Lab and Living Lab are listed as A-418 on the physical directory sign."
+  },
+  {
+    id: "room-design-studio",
+    type: "studio",
+    name: "Design Studio",
+    shortName: "Design Studio",
+    roomNumber: null,
+    roomNumberNote: "Room number not legible in photographs",
+    category: "Studio",
+    description: "'Design Studio' signage is legible on a door visible deeper in the corridor photographs.",
+    descriptionSource: "Uploaded corridor photographs",
+    director: null,
+    directorVerified: false,
+    email: null,
+    emailVerified: false,
+    mapCol: 4, mapRow: 0,
+    positionVerified: false,
+    positionNote: "Approximate — visible at far end of corridor in photos",
+    statusSource: "none",
+    status: null,
+    tags: ["Design", "Studio"],
+    fromDirectory: false
+  },
+  // ── FACULTY ROOMS from hcd.iiitd.ac.in directory (NOT from photos) ──
+  {
+    id: "room-fac-anmol",
+    type: "faculty",
+    name: "Dr. Anmol Srivastava",
+    shortName: "Anmol S.",
+    roomNumber: "A-404",
+    category: "Faculty Room",
+    description: "Head of HCD Dept. Research: AR/VR, Metaverse, Tangible User Interfaces.",
+    descriptionSource: "hcd.iiitd.ac.in faculty directory",
+    director: "Dr. Anmol Srivastava",
+    directorVerified: true,
+    email: "anmol@iiitd.ac.in",
+    emailVerified: true,
+    mapCol: 0, mapRow: 1,
+    positionVerified: false,
+    positionNote: "Room number from faculty directory; corridor position unverified from photos",
+    statusSource: "none",
+    status: null,
+    tags: ["HCI", "AR/VR", "Head of Dept"],
+    fromDirectory: false
+  },
+  {
+    id: "room-fac-richa",
+    type: "faculty",
+    name: "Dr. Richa Gupta",
+    shortName: "Richa G.",
+    roomNumber: "A-406",
+    category: "Faculty Room",
+    description: "Research: Inclusive Design, Accessibility, HCI, Metaverse, Educational Technologies.",
+    descriptionSource: "hcd.iiitd.ac.in faculty directory",
+    director: "Dr. Richa Gupta",
+    directorVerified: true,
+    email: "richa.gupta@iiitd.ac.in",
+    emailVerified: true,
+    mapCol: 1, mapRow: 1,
+    positionVerified: false,
+    positionNote: "Room number from faculty directory",
+    statusSource: "none",
+    status: null,
+    tags: ["Inclusive Design", "Accessibility"],
+    fromDirectory: false
+  },
+  {
+    id: "room-fac-sonal",
+    type: "faculty",
+    name: "Dr. Sonal Keshwani",
+    shortName: "Sonal K.",
+    roomNumber: "A-405",
+    category: "Faculty Room",
+    description: "Research: Design Creativity, Biologically Inspired Design, Conceptual Design.",
+    descriptionSource: "hcd.iiitd.ac.in faculty directory",
+    director: "Dr. Sonal Keshwani",
+    directorVerified: true,
+    email: null,
+    emailVerified: false,
+    mapCol: 2, mapRow: 1,
+    positionVerified: false,
+    positionNote: "Room number from faculty directory",
+    statusSource: "none",
+    status: null,
+    tags: ["Design Methods"],
+    fromDirectory: false
+  },
+  {
+    id: "room-fac-placeholder",
+    type: "faculty",
+    name: "Faculty Room — Details to be confirmed",
+    shortName: "Faculty Room",
+    roomNumber: null,
+    roomNumberNote: "Room number not yet verified",
+    category: "Faculty Room",
+    description: "Additional faculty office space on the 4th floor. Details pending verification.",
+    descriptionSource: null,
+    director: null,
+    directorVerified: false,
+    email: null,
+    emailVerified: false,
+    mapCol: 3, mapRow: 1,
+    positionVerified: false,
+    positionNote: "Position unverified",
+    statusSource: "none",
+    status: null,
+    tags: [],
+    fromDirectory: false
+  }
+];

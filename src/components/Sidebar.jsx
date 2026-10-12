@@ -11,12 +11,12 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       description: 'Labs & faculty directory'
     },
     {
-      id: 'events',
-      label: 'Events & Activities',
-      shortLabel: 'Events',
-      icon: 'bi-calendar3',
-      activeIcon: 'bi-calendar3-event-fill',
-      description: 'Workshops & guest talks'
+      id: 'rooms',
+      label: 'Room Information',
+      shortLabel: 'Rooms',
+      icon: 'bi-map',
+      activeIcon: 'bi-map-fill',
+      description: '4th Floor room & lab map'
     },
     {
       id: 'projects',

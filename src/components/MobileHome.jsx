@@ -178,13 +178,13 @@ export default function MobileHome({ onNavigate }) {
       </div>
 
       {/* =========================================================
-          4. CARD 02 — EVENTS
+          4. CARD 02 — ROOM INFORMATION
          ========================================================= */}
       <div 
-        onClick={() => onNavigate('events')}
+        onClick={() => onNavigate('rooms')}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onNavigate('events'); }}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onNavigate('rooms'); }}
         className="mobile-nav-card p-4 mb-3 position-relative overflow-hidden cursor-pointer shadow-sm transition-transform"
         style={{
           backgroundColor: '#FFFFFF',
@@ -193,7 +193,7 @@ export default function MobileHome({ onNavigate }) {
           color: '#1E293B',
           cursor: 'pointer'
         }}
-        aria-label="Open Events"
+        aria-label="Open Room Information"
       >
         <div className="d-flex align-items-start justify-content-between mb-3">
           {/* Badge 02 */}
@@ -209,31 +209,31 @@ export default function MobileHome({ onNavigate }) {
             02
           </span>
 
-          {/* Calendar Graphic Illustration */}
+          {/* Floor Map Illustration */}
           <div 
             className="rounded-4 p-2 d-flex flex-column align-items-center justify-content-center"
             style={{ width: '84px', height: '68px', backgroundColor: '#F0FAFA', border: '1px solid #CDEEF1' }}
             aria-hidden="true"
           >
-            <div className="w-100 rounded-1 text-center py-0.5 text-white fw-bold mb-1" style={{ backgroundColor: '#29B6BE', fontSize: '0.62rem', letterSpacing: '0.05em' }}>
-              CALENDAR
+            <div className="w-100 rounded-1 text-center py-0.5 text-white fw-bold mb-1" style={{ backgroundColor: '#1A5C58', fontSize: '0.62rem', letterSpacing: '0.05em' }}>
+              4F · R&D
             </div>
-            <i className="bi bi-calendar3-event-fill" style={{ color: '#15797F', fontSize: '1.4rem' }}></i>
+            <i className="bi bi-map-fill" style={{ color: '#15797F', fontSize: '1.4rem' }}></i>
           </div>
         </div>
 
         {/* Content Heading & Subtitle */}
         <h3 className="fs-3 fw-bolder mb-1" style={{ letterSpacing: '-0.02em', color: '#1E293B' }}>
-          Events
+          Room Information
         </h3>
         <p className="mb-3 text-muted fw-medium" style={{ fontSize: '0.88rem', maxWidth: '78%', lineHeight: 1.4, color: '#475569' }}>
-          Discover upcoming workshops, seminars, and critiques.
+          Explore labs and faculty rooms on the HCD floor.
         </p>
 
         {/* Arrow Action Button */}
         <div className="d-flex align-items-center justify-content-between pt-1">
           <span className="badge rounded-pill fw-semibold" style={{ backgroundColor: '#F1F5F9', color: '#475569', fontSize: '0.72rem', padding: '0.35rem 0.65rem' }}>
-            Academic Sessions & Seminars
+            5 Verified Labs · A-413 to A-418
           </span>
 
           <div 

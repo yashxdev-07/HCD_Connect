@@ -16,6 +16,7 @@ import MobileHome from './components/MobileHome';
 import EventCard from './components/EventCard';
 import ProjectCard from './components/ProjectCard';
 import HcdInfoView from './components/HcdInfoView';
+import RoomInfoView from './components/RoomInfoView';
 import CollabModal from './components/CollabModal';
 import DetailModal from './components/DetailModal';
 import './App.css';
@@ -232,119 +233,10 @@ export default function App() {
             )}
 
             {/* =========================================================
-                SCREEN 2: EVENTS & ACTIVITIES (Clean Public View)
+                SCREEN 2: ROOM INFORMATION (Interactive Floor Map)
                ========================================================= */}
-            {activeTab === 'events' && (
-              <div className="hcd-fade-in">
-                {/* Page Header */}
-                <div className="page-header-box">
-                  <div>
-                    <h1 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)', fontSize: '1.8rem', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
-                      Events & Activities
-                    </h1>
-                    <p style={{ color: 'var(--hcd-body)', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
-                      Discover academic workshops, guest lectures, capstone critiques, and research seminars across IIIT Delhi studios.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Filter Toolbar */}
-                <Card className="filter-toolbar-card">
-                  <Row className="g-2 g-md-3 align-items-center">
-                    {/* 1. Search events */}
-                    <Col md={5}>
-                      <InputGroup>
-                        <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}>
-                          <i className="bi bi-search"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="text"
-                          placeholder="Search events by title, room, or speaker..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="border-start-0 ps-0"
-                          style={{ borderColor: 'var(--hcd-border)' }}
-                        />
-                      </InputGroup>
-                    </Col>
-
-                    {/* 2. Category filter */}
-                    <Col sm={6} md={3}>
-                      <Form.Select
-                        value={eventCategoryFilter}
-                        onChange={(e) => setEventCategoryFilter(e.target.value)}
-                      >
-                        <option value="All">All Categories</option>
-                        <option value="Workshop">Workshops</option>
-                        <option value="Guest Lecture">Guest Lectures</option>
-                        <option value="Seminar">Research Seminars</option>
-                        <option value="Exhibition">Exhibitions</option>
-                        <option value="Hackathon">Hackathons</option>
-                      </Form.Select>
-                    </Col>
-
-                    {/* 3. Schedule/status filter */}
-                    <Col sm={6} md={2}>
-                      <Form.Select
-                        value={eventStatusFilter}
-                        onChange={(e) => setEventStatusFilter(e.target.value)}
-                      >
-                        <option value="All">All Schedules</option>
-                        <option value="Upcoming">Upcoming Only</option>
-                        <option value="Ongoing">Ongoing (Scheduled)</option>
-                        <option value="Completed">Completed</option>
-                      </Form.Select>
-                    </Col>
-
-                    {/* 4. Verified-only filter */}
-                    <Col md={2}>
-                      <Button
-                        type="button"
-                        variant={verifiedOnlyFilter ? "primary" : "secondary"}
-                        onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
-                        className="w-100 d-inline-flex align-items-center justify-content-center gap-2 fw-semibold"
-                      >
-                        <i className="bi bi-patch-check-fill" style={{ color: verifiedOnlyFilter ? '#FFFFFF' : '#059669' }}></i>
-                        <span>Verified Only</span>
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card>
-
-                {/* Events Grid */}
-                {filteredEvents.length === 0 ? (
-                  <Card className="p-5 text-center hcd-card bg-white my-4">
-                    <div className="text-warning mb-3">
-                      <i className="bi bi-exclamation-triangle-fill fs-1"></i>
-                    </div>
-                    <h4 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)' }}>No Matching Events Found</h4>
-                    <p className="small mb-3" style={{ color: 'var(--hcd-body)' }}>
-                      Try clearing your search query or adjusting your category/schedule filter.
-                    </p>
-                    <div>
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        onClick={() => { setSearchQuery(''); setEventCategoryFilter('All'); setEventStatusFilter('All'); setVerifiedOnlyFilter(false); }}
-                      >
-                        Reset All Filters
-                      </Button>
-                    </div>
-                  </Card>
-                ) : (
-                  <Row xs={1} md={2} lg={3} className="g-4">
-                    {filteredEvents.map(evt => (
-                      <Col key={evt.id}>
-                        <EventCard 
-                          event={evt}
-                          onRsvpToggle={handleRsvpToggle}
-                          onSelectEvent={(e) => handleOpenDetail(e, 'event')}
-                        />
-                      </Col>
-                    ))}
-                  </Row>
-                )}
-              </div>
+            {activeTab === 'rooms' && (
+              <RoomInfoView />
             )}
 
             {/* =========================================================
