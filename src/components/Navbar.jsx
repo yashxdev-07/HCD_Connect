@@ -41,7 +41,7 @@ export default function HcdNavbar({
             <input
               type="search"
               className="hcd-search-input"
-              placeholder="Search events, projects, labs, skills..."
+              placeholder="Search projects, labs, rooms, faculty, skills..."
               value={searchQuery || ''}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Global platform search"

@@ -37,10 +37,10 @@ export default function Footer({ onSwitchTab }) {
             <button
               type="button"
               className="hcd-footer-link"
-              onClick={() => onSwitchTab('events')}
+              onClick={() => onSwitchTab('rooms')}
             >
-              <i className="bi bi-calendar3"></i>
-              Events &amp; Activities
+              <i className="bi bi-map"></i>
+              Room Information
             </button>
             <button
               type="button"
