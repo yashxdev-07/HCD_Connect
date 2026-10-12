@@ -1,52 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Calendar, 
-  Briefcase, 
-  Layers, 
-  Search, 
-  ArrowRight, 
-  GraduationCap, 
-  Users, 
-  Lightbulb, 
-  ShieldCheck, 
-  PlusCircle, 
-  Sparkles,
-  MapPin,
-  Clock,
-  Compass,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+  Container, 
+  Row, 
+  Col, 
+  Card, 
+  Button, 
+  Form, 
+  InputGroup 
+} from 'react-bootstrap';
 
-import Navbar from './components/Navbar';
+import TopBar from './components/Navbar';
+import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
+import MobileHome from './components/MobileHome';
 import EventCard from './components/EventCard';
 import ProjectCard from './components/ProjectCard';
-import LabCard from './components/LabCard';
-import AuthModal from './components/AuthModal';
-import EventSubmissionModal from './components/EventSubmissionModal';
+import HcdInfoView from './components/HcdInfoView';
 import CollabModal from './components/CollabModal';
 import DetailModal from './components/DetailModal';
-import AdminDashboard from './components/AdminDashboard';
+import './App.css';
 
 import { 
   INITIAL_EVENTS, 
   INITIAL_PROJECTS, 
   INITIAL_LABS, 
-  INITIAL_SUBMISSIONS,
-  DEMO_USERS 
+  INITIAL_FACULTY 
 } from './data/mockData';
 
 export default function App() {
-  // Navigation & User State
-  const [activeTab, setActiveTab] = useState('home');
-  const [currentUser, setCurrentUser] = useState(null); // null or user object
+  const MOBILE_BREAKPOINT = 600;
 
-  // Datasets with interactive mutation capability
+  // Mobile Screen Detection (<= 600px)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= MOBILE_BREAKPOINT;
+    }
+    return false;
+  });
+
+  // Navigation State (defaults to 'home' on mobile <= 600px, 'info' on desktop > 600px)
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT) {
+      return 'home';
+    }
+    return 'info';
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileNow = window.innerWidth <= MOBILE_BREAKPOINT;
+      setIsMobile((prev) => {
+        if (prev !== mobileNow) {
+          if (mobileNow) {
+            // When resizing to mobile width, reveal the mobile-first homepage
+            setActiveTab('home');
+          } else {
+            // When returning to desktop, default to info
+            setActiveTab(curr => curr === 'home' ? 'info' : curr);
+          }
+        }
+        return mobileNow;
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Datasets
   const [events, setEvents] = useState(INITIAL_EVENTS);
-  const [projects, setProjects] = useState(INITIAL_PROJECTS);
-  const [labs, setLabs] = useState(INITIAL_LABS);
-  const [submissions, setSubmissions] = useState(INITIAL_SUBMISSIONS);
+  const [projects] = useState(INITIAL_PROJECTS);
+  const [labs] = useState(INITIAL_LABS);
+  const [faculty] = useState(INITIAL_FACULTY);
 
   // Search & Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,8 +80,6 @@ export default function App() {
   const [verifiedOnlyFilter, setVerifiedOnlyFilter] = useState(false);
 
   // Modals state
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isSubmitEventOpen, setIsSubmitEventOpen] = useState(false);
   const [selectedCollabProject, setSelectedCollabProject] = useState(null);
   const [detailModal, setDetailModal] = useState({ isOpen: false, item: null, type: null });
 
@@ -101,61 +123,6 @@ export default function App() {
     setDetailModal({ isOpen: false, item: null, type: null });
   };
 
-  const handleSubmitProposal = (newSubmission) => {
-    setSubmissions(prev => [newSubmission, ...prev]);
-  };
-
-  const handleApproveSubmission = (subId) => {
-    const targetSub = submissions.find(s => s.id === subId);
-    if (!targetSub) return;
-
-    const approvedEvent = {
-      id: `evt-${Date.now()}`,
-      title: targetSub.title,
-      category: targetSub.category,
-      date: targetSub.date,
-      time: targetSub.time,
-      room: targetSub.room,
-      capacity: targetSub.capacity,
-      attendeesCount: 0,
-      isRsvp: false,
-      description: targetSub.description,
-      speaker: targetSub.submittedBy,
-      facultyContact: {
-        name: targetSub.facultySponsor || 'HCD Faculty Desk',
-        role: 'Faculty Coordinator',
-        email: 'hcd-office@iiitd.ac.in',
-      },
-      taContact: {
-        name: targetSub.submittedBy,
-        role: 'Organizer',
-        email: targetSub.submitterEmail,
-      },
-      isVerified: true,
-      tags: [targetSub.category, 'Student Initiated'],
-      featured: false,
-    };
-
-    setEvents(prev => [approvedEvent, ...prev]);
-    setSubmissions(prev => prev.map(s => s.id === subId ? { ...s, status: 'Approved' } : s));
-  };
-
-  const handleRejectSubmission = (subId) => {
-    setSubmissions(prev => prev.map(s => s.id === subId ? { ...s, status: 'Rejected' } : s));
-  };
-
-  const handleToggleEventVerification = (id) => {
-    setEvents(prev => prev.map(e => e.id === id ? { ...e, isVerified: !e.isVerified, isDemo: e.isVerified } : e));
-  };
-
-  const handleToggleProjectVerification = (id) => {
-    setProjects(prev => prev.map(p => p.id === id ? { ...p, isVerified: !p.isVerified, isDemo: p.isVerified } : p));
-  };
-
-  const handleToggleLabVerification = (id) => {
-    setLabs(prev => prev.map(l => l.id === id ? { ...l, isVerified: !l.isVerified, isDemo: l.isVerified } : l));
-  };
-
   // -------------------------------------------------------------
   // Filter Logic with Scheduled Status
   // -------------------------------------------------------------
@@ -192,557 +159,313 @@ export default function App() {
     return matchesSearch && matchesStatus && matchesVerified;
   });
 
-  const filteredLabs = labs.filter(lab => {
-    const matchesSearch = lab.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lab.director.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lab.theme.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lab.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lab.equipment.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesVerified = !verifiedOnlyFilter || lab.isVerified;
-    return matchesSearch && matchesVerified;
-  });
-
-  const pendingCount = submissions.filter(s => s.status === 'Pending').length;
-  const nextFeaturedEvent = events.find(e => e.featured) || events[0];
-
   return (
-    <div className="app-root">
-      {/* 1. Header & Navigation */}
-      <Navbar 
+    <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: 'var(--hcd-light-bg)', paddingTop: '64px' }}>
+      {/* 1. COMPACT TOPBAR (Application Header with Untouched Logo) */}
+      <TopBar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        currentUser={currentUser}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={() => setCurrentUser(null)}
-        onOpenSubmitEvent={() => setIsSubmitEventOpen(true)}
-        pendingSubmissionsCount={pendingCount}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        isMobile={isMobile}
       />
 
-      {/* =========================================================
-          TAB 1: HOMEPAGE
-         ========================================================= */}
-      {activeTab === 'home' && (
-        <main>
-          {/* Hero Section */}
-          <section className="hero-section">
-            <div className="container hero-grid">
-              {/* LEFT Column */}
-              <div className="hero-left">
-                <div className="hero-eyebrow">
-                  <GraduationCap size={14} className="flex-shrink-0" />
-                  <span>IIIT DELHI · HUMAN-CENTERED DESIGN</span>
-                </div>
+      {/* 2. APP BODY: Exactly 3 Navigation Options in Sidebar + Central Content Area */}
+      <div className="d-flex flex-row flex-grow-1 position-relative">
+        <Sidebar 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
 
-                <h1 className="hero-title">
-                  Connect. Create. <span className="hero-accent">Innovate.</span>
-                </h1>
+        {/* Central Content Canvas */}
+        <main className={`hcd-main-content ${isMobile && activeTab === 'home' ? 'p-2 pt-3' : 'p-3 p-md-4'}`}>
+          <Container fluid="xl" className="px-1 px-md-3">
 
-                <p className="hero-lead">
-                  Discover research opportunities, explore departmental events, and connect with faculty and fellow students through one central HCD platform.
-                </p>
-
-                <div className="hero-actions">
-                  <button 
-                    onClick={() => setActiveTab('events')} 
-                    className="btn btn-primary"
-                  >
-                    <Calendar size={16} />
-                    <span>Explore Events</span>
-                  </button>
-
-                  <button 
-                    onClick={() => setActiveTab('projects')} 
-                    className="btn btn-secondary"
-                  >
-                    <Briefcase size={16} />
-                    <span>Discover Projects</span>
-                  </button>
-
-                  <button 
-                    onClick={() => setActiveTab('labs')} 
-                    className="btn btn-outline-white"
-                  >
-                    <Layers size={16} />
-                    <span>Browse Labs</span>
-                  </button>
-                </div>
-
-                {/* Compact Statistics */}
-                <div className="hero-stats-strip">
-                  <div className="hero-stat-box">
-                    <span className="hero-stat-number">{labs.length}</span>
-                    <span className="hero-stat-label">Research Studios</span>
-                  </div>
-                  <div className="hero-stat-box">
-                    <span className="hero-stat-number">{projects.length}</span>
-                    <span className="hero-stat-label">Active Projects</span>
-                  </div>
-                  <div className="hero-stat-box">
-                    <span className="hero-stat-number">{events.length}</span>
-                    <span className="hero-stat-label">Upcoming Events</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT Column: Tasteful Research Feature Panel */}
-              <div className="hero-right">
-                <div className="hero-visual-card">
-                  <div className="visual-card-top">
-                    <span className="visual-floating-badge">
-                      <Sparkles size={13} />
-                      Research & Collaboration
-                    </span>
-                    <span className="visual-location-tag">
-                      <MapPin size={13} className="text-accent" />
-                      R&D Building · IIIT Delhi
-                    </span>
-                  </div>
-
-                  <div className="visual-inner-content">
-                    <span className="badge badge-category" style={{ marginBottom: '8px' }}>
-                      {nextFeaturedEvent.category}
-                    </span>
-                    <h3 className="visual-card-title">{nextFeaturedEvent.title}</h3>
-                    <div className="visual-meta-row">
-                      <Clock size={13} />
-                      <span>{nextFeaturedEvent.date} · {nextFeaturedEvent.time}</span>
-                    </div>
-                    <div className="visual-meta-row">
-                      <MapPin size={13} />
-                      <span>{nextFeaturedEvent.room}</span>
-                    </div>
-                    <div className="visual-meta-row" style={{ marginTop: '8px' }}>
-                      <span>Speaker: <strong>{nextFeaturedEvent.speaker}</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="visual-footer-bar">
-                    <button 
-                      onClick={() => handleRsvpToggle(nextFeaturedEvent.id)}
-                      className={`btn btn-sm ${nextFeaturedEvent.isRsvp ? 'btn-success' : 'btn-primary'}`}
-                    >
-                      {nextFeaturedEvent.isRsvp ? '✓ RSVP Confirmed' : 'RSVP for Session'}
-                    </button>
-                    <button
-                      onClick={() => handleOpenDetail(nextFeaturedEvent, 'event')}
-                      className="btn btn-outline-white btn-sm"
-                    >
-                      <span>View Details</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Three Feature Cards Section */}
-          <section className="features-section">
-            <div className="container">
-              <div className="features-grid">
-                {/* CARD 1 */}
-                <div className="feature-card">
-                  <div className="feature-icon-box">
-                    <Lightbulb size={22} />
-                  </div>
-                  <h3 className="feature-title">Interdisciplinary Research</h3>
-                  <p className="feature-description">
-                    Explore research areas, labs, and innovative academic projects in tactile interfaces, accessibility, and spatial computing.
-                  </p>
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('labs')}
-                    className="feature-action-btn"
-                  >
-                    <span>Explore Research</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-
-                {/* CARD 2 */}
-                <div className="feature-card">
-                  <div className="feature-icon-box">
-                    <Users size={22} />
-                  </div>
-                  <h3 className="feature-title">Student-Faculty Collaboration</h3>
-                  <p className="feature-description">
-                    Discover projects seeking student researchers and collaborators across B.Tech CS+D, M.Des, and Ph.D. programs.
-                  </p>
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('projects')}
-                    className="feature-action-btn"
-                  >
-                    <span>Find Opportunities</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-
-                {/* CARD 3 */}
-                <div className="feature-card">
-                  <div className="feature-icon-box">
-                    <Calendar size={22} />
-                  </div>
-                  <h3 className="feature-title">Events & Design Activities</h3>
-                  <p className="feature-description">
-                    Discover seminars, workshops, presentations, and departmental activities scheduled across IIIT Delhi studios.
-                  </p>
-                  <button 
-                    type="button" 
-                    onClick={() => setActiveTab('events')}
-                    className="feature-action-btn"
-                  >
-                    <span>View Events</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Featured Research Projects Spotlight Section */}
-          <section className="page-section" style={{ background: '#FFFFFF', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
-            <div className="container">
-              <div className="section-head-bar">
-                <div>
-                  <h2 className="section-title">Featured Research Projects</h2>
-                  <p className="section-subtitle">
-                    Explore research opportunities and find projects aligned with your interests.
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setActiveTab('projects')} 
-                  className="btn btn-secondary"
-                >
-                  <span>View All Projects</span>
-                  <ArrowRight size={14} />
-                </button>
-              </div>
-
-              <div className="grid-cards">
-                {projects.slice(0, 3).map(proj => (
-                  <ProjectCard 
-                    key={proj.id}
-                    project={proj}
-                    onOpenCollab={handleOpenCollab}
-                    onSelectProject={(p) => handleOpenDetail(p, 'project')}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        </main>
-      )}
-
-      {/* =========================================================
-          TAB 2: EVENTS & ACTIVITIES
-         ========================================================= */}
-      {activeTab === 'events' && (
-        <main className="page-section">
-          <div className="container">
-            <div className="section-head-bar">
-              <div>
-                <h1 className="section-title">Events & Activities</h1>
-                <p className="section-subtitle">
-                  Academic workshops, guest lectures, capstone critiques, and seminars at IIIT Delhi.
-                </p>
-              </div>
-              <button 
-                onClick={() => setIsSubmitEventOpen(true)}
-                className="btn btn-navy"
-              >
-                <PlusCircle size={15} />
-                <span>Submit Event Proposal</span>
-              </button>
-            </div>
-
-            {/* Filter & Search Toolbar */}
-            <div className="filter-toolbar">
-              <div className="search-input-box">
-                <Search size={15} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search events by title, room, or speaker..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="search-input"
-                />
-              </div>
-
-              <div className="filter-controls-group">
-                <select
-                  value={eventCategoryFilter}
-                  onChange={(e) => setEventCategoryFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="All">All Categories</option>
-                  <option value="Workshop">Workshops</option>
-                  <option value="Guest Lecture">Guest Lectures</option>
-                  <option value="Seminar">Research Seminars</option>
-                  <option value="Exhibition">Exhibitions</option>
-                  <option value="Hackathon">Hackathons</option>
-                </select>
-
-                <select
-                  value={eventStatusFilter}
-                  onChange={(e) => setEventStatusFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="All">All Schedules</option>
-                  <option value="Upcoming">Upcoming Only</option>
-                  <option value="Ongoing">Ongoing (Scheduled)</option>
-                  <option value="Completed">Completed</option>
-                </select>
-
+            {/* Back button on mobile when inside detailed views */}
+            {isMobile && activeTab !== 'home' && (
+              <div className="mb-3 d-flex align-items-center justify-content-between">
                 <button
                   type="button"
-                  onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
-                  className={`filter-toggle-btn ${verifiedOnlyFilter ? 'active' : ''}`}
+                  onClick={() => setActiveTab('home')}
+                  className="btn btn-sm d-inline-flex align-items-center gap-2 fw-bold px-3 py-1.5 rounded-pill"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    color: '#115E59',
+                    border: '1.5px solid #CDEEF1',
+                    fontSize: '0.82rem',
+                    boxShadow: 'inset 0 1px 1px rgba(255,255,255,1), 0 2px 8px rgba(17, 94, 89, 0.1)',
+                    borderRadius: '24px',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
+                    fontWeight: 600
+                  }}
+                  aria-label="Back to Mobile Overview"
                 >
-                  <ShieldCheck size={14} />
-                  <span>Verified Only</span>
+                  <i className="bi bi-arrow-left-circle-fill fs-6" aria-hidden="true"></i>
+                  <span>Back to Overview</span>
                 </button>
-              </div>
-            </div>
-
-            {/* Events Grid */}
-            {filteredEvents.length === 0 ? (
-              <div className="empty-state-box">
-                <AlertCircle size={40} className="text-amber" />
-                <h3>No Matching Events Found</h3>
-                <p>Try clearing your search query or adjusting your category/schedule filter.</p>
-                <button 
-                  onClick={() => { setSearchQuery(''); setEventCategoryFilter('All'); setEventStatusFilter('All'); setVerifiedOnlyFilter(false); }}
-                  className="btn btn-secondary btn-sm"
-                  style={{ marginTop: '8px' }}
+                <span 
+                  className="badge rounded-pill fw-semibold px-2.5 py-1.5"
+                  style={{ backgroundColor: '#E5EFF2', color: '#115E59', border: '1px solid #CDEEF1', fontSize: '0.72rem' }}
                 >
-                  Reset All Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid-cards">
-                {filteredEvents.map(evt => (
-                  <EventCard 
-                    key={evt.id}
-                    event={evt}
-                    onRsvpToggle={handleRsvpToggle}
-                    onSelectEvent={(e) => handleOpenDetail(e, 'event')}
-                  />
-                ))}
+                  📍 4th Floor · R&D Bldg
+                </span>
               </div>
             )}
-          </div>
-        </main>
-      )}
+            
+            {/* =========================================================
+                SCREEN 0: MOBILE OVERVIEW HOME (Matches Reference Image)
+               ========================================================= */}
+            {isMobile && activeTab === 'home' && (
+              <MobileHome onNavigate={(tab) => setActiveTab(tab)} />
+            )}
 
-      {/* =========================================================
-          TAB 3: PROJECTS & COLLABORATION
-         ========================================================= */}
-      {activeTab === 'projects' && (
-        <main className="page-section">
-          <div className="container">
-            <div className="section-head-bar">
+            {/* =========================================================
+                SCREEN 1: HCD INFORMATION (Directory & Level 4 Labs/Faculty)
+               ========================================================= */}
+            {((activeTab === 'info' || (!isMobile && activeTab === 'home') || activeTab === 'labs') && (!isMobile || activeTab !== 'home')) && (
+              <HcdInfoView 
+                labs={labs}
+                searchQuery={searchQuery}
+                onSelectLab={(l) => handleOpenDetail(l, 'lab')}
+              />
+            )}
+
+            {/* =========================================================
+                SCREEN 2: EVENTS & ACTIVITIES (Clean Public View)
+               ========================================================= */}
+            {activeTab === 'events' && (
+              <div className="hcd-fade-in">
+                {/* Page Header */}
+                <div className="page-header-box">
+                  <div>
+                    <h1 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)', fontSize: '1.8rem', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+                      Events & Activities
+                    </h1>
+                    <p style={{ color: 'var(--hcd-body)', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
+                      Discover academic workshops, guest lectures, capstone critiques, and research seminars across IIIT Delhi studios.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filter Toolbar */}
+                <Card className="filter-toolbar-card">
+                  <Row className="g-2 g-md-3 align-items-center">
+                    {/* 1. Search events */}
+                    <Col md={5}>
+                      <InputGroup>
+                        <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}>
+                          <i className="bi bi-search"></i>
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search events by title, room, or speaker..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="border-start-0 ps-0"
+                          style={{ borderColor: 'var(--hcd-border)' }}
+                        />
+                      </InputGroup>
+                    </Col>
+
+                    {/* 2. Category filter */}
+                    <Col sm={6} md={3}>
+                      <Form.Select
+                        value={eventCategoryFilter}
+                        onChange={(e) => setEventCategoryFilter(e.target.value)}
+                      >
+                        <option value="All">All Categories</option>
+                        <option value="Workshop">Workshops</option>
+                        <option value="Guest Lecture">Guest Lectures</option>
+                        <option value="Seminar">Research Seminars</option>
+                        <option value="Exhibition">Exhibitions</option>
+                        <option value="Hackathon">Hackathons</option>
+                      </Form.Select>
+                    </Col>
+
+                    {/* 3. Schedule/status filter */}
+                    <Col sm={6} md={2}>
+                      <Form.Select
+                        value={eventStatusFilter}
+                        onChange={(e) => setEventStatusFilter(e.target.value)}
+                      >
+                        <option value="All">All Schedules</option>
+                        <option value="Upcoming">Upcoming Only</option>
+                        <option value="Ongoing">Ongoing (Scheduled)</option>
+                        <option value="Completed">Completed</option>
+                      </Form.Select>
+                    </Col>
+
+                    {/* 4. Verified-only filter */}
+                    <Col md={2}>
+                      <Button
+                        type="button"
+                        variant={verifiedOnlyFilter ? "primary" : "secondary"}
+                        onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
+                        className="w-100 d-inline-flex align-items-center justify-content-center gap-2 fw-semibold"
+                      >
+                        <i className="bi bi-patch-check-fill" style={{ color: verifiedOnlyFilter ? '#FFFFFF' : '#059669' }}></i>
+                        <span>Verified Only</span>
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card>
+
+                {/* Events Grid */}
+                {filteredEvents.length === 0 ? (
+                  <Card className="p-5 text-center hcd-card bg-white my-4">
+                    <div className="text-warning mb-3">
+                      <i className="bi bi-exclamation-triangle-fill fs-1"></i>
+                    </div>
+                    <h4 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)' }}>No Matching Events Found</h4>
+                    <p className="small mb-3" style={{ color: 'var(--hcd-body)' }}>
+                      Try clearing your search query or adjusting your category/schedule filter.
+                    </p>
+                    <div>
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => { setSearchQuery(''); setEventCategoryFilter('All'); setEventStatusFilter('All'); setVerifiedOnlyFilter(false); }}
+                      >
+                        Reset All Filters
+                      </Button>
+                    </div>
+                  </Card>
+                ) : (
+                  <Row xs={1} md={2} lg={3} className="g-4">
+                    {filteredEvents.map(evt => (
+                      <Col key={evt.id}>
+                        <EventCard 
+                          event={evt}
+                          onRsvpToggle={handleRsvpToggle}
+                          onSelectEvent={(e) => handleOpenDetail(e, 'event')}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
+              </div>
+            )}
+
+            {/* =========================================================
+                SCREEN 3: PROJECTS & COLLABORATION
+               ========================================================= */}
+            {activeTab === 'projects' && (
               <div>
-                <h1 className="section-title">Featured Research Projects</h1>
-                <p className="section-subtitle">
-                  Explore research opportunities and find projects aligned with your interests.
-                </p>
-              </div>
-            </div>
+<div className="hcd-fade-in">
+  {/* Header */}
+  <div className="page-header-box">
+    <div>
+      <h1 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)', fontSize: '1.8rem', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+        Projects & Collaboration
+      </h1>
+      <p style={{ color: 'var(--hcd-body)', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
+        Explore faculty-led research projects seeking student researchers and collaborative assistants.
+      </p>
+    </div>
+  </div>
+</div>
 
-            {/* Filter Toolbar */}
-            <div className="filter-toolbar">
-              <div className="search-input-box">
-                <Search size={15} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search projects by title, domain, skills (e.g. React, Unity), or supervisor..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="search-input"
-                />
-              </div>
+                {/* Filter Toolbar */}
+                <Card className="filter-toolbar-card">
+                  <Row className="g-2 g-md-3 align-items-center">
+                    <Col md={6}>
+                      <InputGroup>
+                        <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}>
+                          <i className="bi bi-search"></i>
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search projects by title, domain, skills (e.g. React, Unity), or supervisor..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="border-start-0 ps-0"
+                          style={{ borderColor: 'var(--hcd-border)' }}
+                        />
+                      </InputGroup>
+                    </Col>
 
-              <div className="filter-controls-group">
-                <select
-                  value={projectStatusFilter}
-                  onChange={(e) => setProjectStatusFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="All">All Collaboration Statuses</option>
-                  <option value="Open">Collab Open Only</option>
-                  <option value="Limited">Limited Spots</option>
-                  <option value="Closed">Team Full</option>
-                </select>
+                    <Col sm={7} md={3}>
+                      <Form.Select
+                        value={projectStatusFilter}
+                        onChange={(e) => setProjectStatusFilter(e.target.value)}
+                      >
+                        <option value="All">All Collaboration Statuses</option>
+                        <option value="Open">Collab Open Only</option>
+                        <option value="Limited">Limited Spots</option>
+                        <option value="Closed">Team Full</option>
+                      </Form.Select>
+                    </Col>
 
-                <button
-                  type="button"
-                  onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
-                  className={`filter-toggle-btn ${verifiedOnlyFilter ? 'active' : ''}`}
-                >
-                  <ShieldCheck size={14} />
-                  <span>Verified Projects Only</span>
-                </button>
-              </div>
-            </div>
+                    <Col sm={5} md={3}>
+                      <Button
+                        type="button"
+                        variant={verifiedOnlyFilter ? "primary" : "secondary"}
+                        onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
+                        className="w-100 d-inline-flex align-items-center justify-content-center gap-2 fw-semibold"
+                      >
+                        <i className="bi bi-patch-check-fill" style={{ color: verifiedOnlyFilter ? '#FFFFFF' : '#059669' }}></i>
+                        <span>Verified Projects Only</span>
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card>
 
-            {/* Projects Grid */}
-            {filteredProjects.length === 0 ? (
-              <div className="empty-state-box">
-                <AlertCircle size={40} className="text-amber" />
-                <h3>No Research Projects Found</h3>
-                <p>No project entries match your current search query or collaboration status filter.</p>
-                <button 
-                  onClick={() => { setSearchQuery(''); setProjectStatusFilter('All'); setVerifiedOnlyFilter(false); }}
-                  className="btn btn-secondary btn-sm"
-                  style={{ marginTop: '8px' }}
-                >
-                  Clear Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid-cards">
-                {filteredProjects.map(proj => (
-                  <ProjectCard 
-                    key={proj.id}
-                    project={proj}
-                    onOpenCollab={handleOpenCollab}
-                    onSelectProject={(p) => handleOpenDetail(p, 'project')}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </main>
-      )}
-
-      {/* =========================================================
-          TAB 4: LABS & RESEARCH
-         ========================================================= */}
-      {activeTab === 'labs' && (
-        <main className="page-section">
-          <div className="container">
-            <div className="section-head-bar">
-              <div>
-                <h1 className="section-title">Labs & Research</h1>
-                <p className="section-subtitle">
-                  Explore research studios, facilities, and experimental equipment in the HCD department.
-                </p>
-              </div>
-            </div>
-
-            {/* Filter Toolbar */}
-            <div className="filter-toolbar">
-              <div className="search-input-box">
-                <Search size={15} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search labs by name, theme, or equipment (e.g. Eye Tracker, PCB)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="search-input"
-                />
-              </div>
-
-              <div className="filter-controls-group">
-                <button
-                  type="button"
-                  onClick={() => setVerifiedOnlyFilter(!verifiedOnlyFilter)}
-                  className={`filter-toggle-btn ${verifiedOnlyFilter ? 'active' : ''}`}
-                >
-                  <ShieldCheck size={14} />
-                  <span>Verified Facilities Only</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Labs Grid */}
-            {filteredLabs.length === 0 ? (
-              <div className="empty-state-box">
-                <AlertCircle size={40} className="text-amber" />
-                <h3>No Laboratories Found</h3>
-                <p>No laboratory facility matches the current search keywords.</p>
-                <button 
-                  onClick={() => { setSearchQuery(''); setVerifiedOnlyFilter(false); }}
-                  className="btn btn-secondary btn-sm"
-                  style={{ marginTop: '8px' }}
-                >
-                  Reset Filter
-                </button>
-              </div>
-            ) : (
-              <div className="grid-cards">
-                {filteredLabs.map(lab => (
-                  <LabCard 
-                    key={lab.id}
-                    lab={lab}
-                    onSelectLab={(l) => handleOpenDetail(l, 'lab')}
-                  />
-                ))}
+                {/* Projects Grid */}
+                {filteredProjects.length === 0 ? (
+                  <Card className="p-5 text-center hcd-card bg-white my-4">
+                    <div className="text-warning mb-3">
+                      <i className="bi bi-exclamation-triangle-fill fs-1"></i>
+                    </div>
+                    <h4 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)' }}>No Research Projects Found</h4>
+                    <p className="small mb-3" style={{ color: 'var(--hcd-body)' }}>
+                      No project entries match your current search query or collaboration status filter.
+                    </p>
+                    <div>
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => { setSearchQuery(''); setProjectStatusFilter('All'); setVerifiedOnlyFilter(false); }}
+                      >
+                        Clear Filters
+                      </Button>
+                    </div>
+                  </Card>
+                ) : (
+                  <Row xs={1} md={2} lg={3} className="g-4">
+                    {filteredProjects.map(proj => (
+                      <Col key={proj.id}>
+                        <ProjectCard 
+                          project={proj}
+                          onOpenCollab={handleOpenCollab}
+                          onSelectProject={(p) => handleOpenDetail(p, 'project')}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
               </div>
             )}
-          </div>
+          </Container>
+
+          {/* Compact In-App Footer */}
+          <Footer onSwitchTab={setActiveTab} />
         </main>
-      )}
+      </div>
 
       {/* =========================================================
-          TAB 5: ADMIN DASHBOARD
-         ========================================================= */}
-      {activeTab === 'admin' && (
-        <main className="container">
-          <AdminDashboard 
-            submissions={submissions}
-            onApproveSubmission={handleApproveSubmission}
-            onRejectSubmission={handleRejectSubmission}
-            events={events}
-            onToggleEventVerification={handleToggleEventVerification}
-            projects={projects}
-            onToggleProjectVerification={handleToggleProjectVerification}
-            labs={labs}
-            onToggleLabVerification={handleToggleLabVerification}
-            onSwitchTab={setActiveTab}
-          />
-        </main>
-      )}
-
-      {/* Universal Multi-Column Footer */}
-      <Footer onSwitchTab={setActiveTab} />
-
-      {/* =========================================================
-          MODALS & OVERLAYS
+          MODALS & OVERLAYS (Preserved Student Interactions)
          ========================================================= */}
 
-      {/* 1. Student / Admin Authentication Modal */}
-      <AuthModal 
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={(user) => {
-          setCurrentUser(user);
-          if (user.role === 'admin') {
-            setActiveTab('admin');
-          }
-        }}
-      />
-
-      {/* 2. Event Proposal Submission Modal */}
-      <EventSubmissionModal 
-        isOpen={isSubmitEventOpen}
-        onClose={() => setIsSubmitEventOpen(false)}
-        onSubmitProposal={handleSubmitProposal}
-        currentUser={currentUser}
-      />
-
-      {/* 3. Project Collaboration Application Modal */}
+      {/* 1. Project Collaboration Application Modal */}
       <CollabModal 
         isOpen={!!selectedCollabProject}
         project={selectedCollabProject}
         onClose={() => setSelectedCollabProject(null)}
-        currentUser={currentUser}
+        currentUser={null}
       />
 
-      {/* 4. Universal Detailed Inspection Modal */}
+      {/* 2. Universal Detailed Inspection Modal */}
       <DetailModal 
         isOpen={detailModal.isOpen}
         item={detailModal.item}

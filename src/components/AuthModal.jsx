@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  X, 
-  LogIn, 
-  UserPlus, 
-  ShieldCheck, 
-  GraduationCap, 
-  Mail, 
-  Lock, 
-  User, 
-  Hash, 
-  Sparkles 
-} from 'lucide-react';
+import { Modal, Form, Nav, Button, Alert, InputGroup, Row, Col } from 'react-bootstrap';
 import { DEMO_USERS } from '../data/mockData';
 
 export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -41,7 +31,6 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     }
 
     if (mode === 'login') {
-      // Check if it matches admin email
       if (formData.email.toLowerCase().includes('admin')) {
         onLoginSuccess(DEMO_USERS[1]);
       } else {
@@ -57,7 +46,6 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
         });
       }
     } else {
-      // Register
       if (!formData.name || !formData.rollNo) {
         setError('Please provide your name and student roll number.');
         return;
@@ -88,173 +76,205 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content auth-modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div className="auth-header-title">
-            <GraduationCap size={22} className="text-accent" />
-            <h2>{mode === 'login' ? 'Sign In to HCD Connect' : 'Student Portal Registration'}</h2>
-          </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <X size={20} />
-          </button>
-        </div>
+    <Modal show={isOpen} onHide={onClose} centered backdrop="static">
+      <Modal.Header closeButton className="border-bottom" style={{ borderColor: 'var(--hcd-border)' }}>
+        <Modal.Title className="fw-bold fs-5 d-flex align-items-center gap-2" style={{ color: 'var(--hcd-charcoal)' }}>
+          <i className="bi bi-mortarboard-fill" style={{ color: 'var(--hcd-cyan)' }}></i>
+          <span>{mode === 'login' ? 'Sign In to HCD Connect' : 'Student Portal Registration'}</span>
+        </Modal.Title>
+      </Modal.Header>
 
-        {/* Tab switcher */}
-        <div className="auth-tab-bar">
-          <button
-            type="button"
-            className={`auth-tab-btn ${mode === 'login' ? 'active' : ''}`}
-            onClick={() => { setMode('login'); setError(''); }}
-          >
-            <LogIn size={15} />
-            <span>Sign In</span>
-          </button>
-          <button
-            type="button"
-            className={`auth-tab-btn ${mode === 'register' ? 'active' : ''}`}
-            onClick={() => { setMode('register'); setError(''); }}
-          >
-            <UserPlus size={15} />
-            <span>Create Student Account</span>
-          </button>
-        </div>
+      <Modal.Body className="p-4">
+        {/* TAB SWITCHER */}
+        <Nav variant="pills" className="nav-fill mb-3 p-1 rounded-3 border" style={{ backgroundColor: 'var(--hcd-light-bg)', borderColor: 'var(--hcd-border)', borderRadius: '12px' }}>
+          <Nav.Item>
+            <Nav.Link 
+              active={mode === 'login'} 
+              onClick={() => { setMode('login'); setError(''); }}
+              className="py-1 small fw-semibold cursor-pointer d-flex align-items-center justify-content-center gap-1"
+              style={{
+                backgroundColor: mode === 'login' ? 'var(--hcd-cyan)' : 'transparent',
+                color: mode === 'login' ? '#FFFFFF' : 'var(--hcd-body)',
+                borderRadius: '8px'
+              }}
+            >
+              <i className="bi bi-box-arrow-in-right"></i>
+              <span>Sign In</span>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link 
+              active={mode === 'register'} 
+              onClick={() => { setMode('register'); setError(''); }}
+              className="py-1 small fw-semibold cursor-pointer d-flex align-items-center justify-content-center gap-1"
+              style={{
+                backgroundColor: mode === 'register' ? 'var(--hcd-cyan)' : 'transparent',
+                color: mode === 'register' ? '#FFFFFF' : 'var(--hcd-body)',
+                borderRadius: '8px'
+              }}
+            >
+              <i className="bi bi-person-plus"></i>
+              <span>Create Account</span>
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
 
-        {error && <div className="alert-error-box">{error}</div>}
+        {error && (
+          <Alert variant="danger" className="py-2 small d-flex align-items-center gap-2">
+            <i className="bi bi-exclamation-octagon-fill"></i>
+            <span>{error}</span>
+          </Alert>
+        )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="auth-form">
+        <Form onSubmit={handleSubmit}>
           {mode === 'register' && (
             <>
-              <div className="form-group">
-                <label className="form-label">Full Name *</label>
-                <div className="input-with-icon">
-                  <User size={16} className="input-icon" />
-                  <input
+              <Form.Group className="mb-3">
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>Full Name *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}><i className="bi bi-person"></i></InputGroup.Text>
+                  <Form.Control
                     type="text"
                     name="name"
                     required
                     placeholder="e.g. Arjun Sharma"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="form-input"
+                    className="border-start-0 ps-0"
+                    style={{ borderColor: 'var(--hcd-border)' }}
                   />
-                </div>
-              </div>
+                </InputGroup>
+              </Form.Group>
 
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label className="form-label">IIITD Roll Number *</label>
-                  <div className="input-with-icon">
-                    <Hash size={16} className="input-icon" />
-                    <input
+              <Row className="g-2 mb-3">
+                <Col md={6}>
+                  <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>IIITD Roll Number *</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}><i className="bi bi-hash"></i></InputGroup.Text>
+                    <Form.Control
                       type="text"
                       name="rollNo"
                       required
                       placeholder="e.g. 2024HCD501"
                       value={formData.rollNo}
                       onChange={handleInputChange}
-                      className="form-input"
+                      className="border-start-0 ps-0"
+                      style={{ borderColor: 'var(--hcd-border)' }}
                     />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Academic Program</label>
-                  <select
+                  </InputGroup>
+                </Col>
+                <Col md={6}>
+                  <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>Academic Program</Form.Label>
+                  <Form.Select
                     name="program"
                     value={formData.program}
                     onChange={handleInputChange}
-                    className="form-select"
+                    style={{ borderColor: 'var(--hcd-border)' }}
                   >
                     <option value="B.Tech CS+D">B.Tech CS+D</option>
                     <option value="M.Des HCD">M.Des HCD</option>
                     <option value="Ph.D. HCD">Ph.D. HCD</option>
                     <option value="Visiting Fellow">Visiting Fellow</option>
-                  </select>
-                </div>
-              </div>
+                  </Form.Select>
+                </Col>
+              </Row>
             </>
           )}
 
-          <div className="form-group">
-            <label className="form-label">IIIT Delhi Email *</label>
-            <div className="input-with-icon">
-              <Mail size={16} className="input-icon" />
-              <input
+          <Form.Group className="mb-3">
+            <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>IIIT Delhi Email *</Form.Label>
+            <InputGroup>
+              <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}><i className="bi bi-envelope"></i></InputGroup.Text>
+              <Form.Control
                 type="email"
                 name="email"
                 required
                 placeholder="yourname@iiitd.ac.in"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="form-input"
+                className="border-start-0 ps-0"
+                style={{ borderColor: 'var(--hcd-border)' }}
               />
-            </div>
-            <span className="form-hint">Use your institutional @iiitd.ac.in address</span>
-          </div>
+            </InputGroup>
+            <Form.Text style={{ fontSize: '0.75rem', color: 'var(--hcd-body)' }}>
+              Institutional @iiitd.ac.in address
+            </Form.Text>
+          </Form.Group>
 
-          <div className="form-group">
-            <label className="form-label">Password *</label>
-            <div className="input-with-icon">
-              <Lock size={16} className="input-icon" />
-              <input
-                type="password"
+          <Form.Group className="mb-3">
+            <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>Password *</Form.Label>
+            <InputGroup>
+              <InputGroup.Text className="bg-light border-end-0 text-muted" style={{ borderColor: 'var(--hcd-border)' }}><i className="bi bi-lock"></i></InputGroup.Text>
+              <Form.Control
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 required
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="form-input"
+                className="border-start-0 ps-0"
+                style={{ borderColor: 'var(--hcd-border)' }}
               />
-            </div>
-          </div>
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
+              </Button>
+            </InputGroup>
+          </Form.Group>
 
           {mode === 'register' && (
-            <div className="form-group">
-              <label className="form-label">Research / Design Interests</label>
-              <input
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-body)' }}>Research Interests</Form.Label>
+              <Form.Control
                 type="text"
                 name="interests"
-                placeholder="e.g. Tangible UI, XR, Medical Device UX, Usability"
+                placeholder="e.g. Tangible UI, XR, Medical Device UX"
                 value={formData.interests}
                 onChange={handleInputChange}
-                className="form-input"
+                style={{ borderColor: 'var(--hcd-border)' }}
               />
-              <span className="form-hint">Comma separated topics</span>
-            </div>
+            </Form.Group>
           )}
 
-          <button type="submit" className="btn btn-primary btn-full" style={{ marginTop: '0.75rem' }}>
+          <Button type="submit" variant="primary" className="w-100 py-2 fw-semibold">
             {mode === 'login' ? 'Sign In to Portal' : 'Complete Registration'}
-          </button>
-        </form>
+          </Button>
+        </Form>
 
-        {/* Quick Demo Login Fill Section */}
-        <div className="quick-demo-section">
-          <div className="divider-label">
-            <span>Or Quick Test with Demo Profiles</span>
+        {/* DEMO PROFILES */}
+        <div className="mt-4 pt-3 border-top" style={{ borderColor: 'var(--hcd-border)' }}>
+          <div className="text-center small fw-semibold text-uppercase mb-2" style={{ fontSize: '0.7rem', letterSpacing: '0.04em', color: 'var(--hcd-body)' }}>
+            Quick Test with Demo Profiles
           </div>
-          <div className="quick-demo-buttons">
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => handleQuickDemo('student')}
-            >
-              <User size={14} className="text-accent" />
-              <span>Demo Student (Arjun)</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => handleQuickDemo('admin')}
-            >
-              <ShieldCheck size={14} className="text-amber" />
-              <span>Faculty Admin (Dept Desk)</span>
-            </button>
-          </div>
+          <Row className="g-2">
+            <Col sm={6}>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-100 d-flex align-items-center justify-content-center gap-1"
+                onClick={() => handleQuickDemo('student')}
+              >
+                <i className="bi bi-person-circle" style={{ color: 'var(--hcd-cyan)' }}></i>
+                <span>Demo Student (Arjun)</span>
+              </Button>
+            </Col>
+            <Col sm={6}>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-100 d-flex align-items-center justify-content-center gap-1"
+                onClick={() => handleQuickDemo('admin')}
+              >
+                <i className="bi bi-shield-check text-warning"></i>
+                <span>Faculty Admin (Dept Desk)</span>
+              </Button>
+            </Col>
+          </Row>
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }

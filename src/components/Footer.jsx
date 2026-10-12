@@ -1,100 +1,84 @@
 import React from 'react';
-import { MapPin, Mail, Phone, GraduationCap, ShieldAlert, ExternalLink } from 'lucide-react';
 
 export default function Footer({ onSwitchTab }) {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="footer-wrapper">
-      <div className="container footer-content">
-        <div className="footer-grid">
-          {/* COLUMN 1: Logo & Platform Mission */}
-          <div className="footer-col footer-col-brand">
-            <div className="footer-brand">
-              <div className="brand-logo-icon">
-                <GraduationCap size={20} className="logo-svg" />
+    <footer className="hcd-footer">
+      <div className="hcd-footer-inner">
+
+        {/* TOP ROW */}
+        <div className="hcd-footer-top">
+
+          {/* Brand block */}
+          <div className="hcd-footer-brand">
+            <div className="hcd-footer-logo">
+              <i className="bi bi-mortarboard-fill"></i>
+            </div>
+            <div>
+              <div className="hcd-footer-brand-name">
+                HCD<span>CONNECT</span>
               </div>
-              <div className="brand-text-block">
-                <span className="brand-title">HCD CONNECT</span>
-                <span className="brand-subtitle">IIIT Delhi</span>
-              </div>
-            </div>
-            <p className="footer-desc">
-              The collaborative research and discovery platform for the Department of Human-Centered Design at IIIT Delhi. Connecting undergraduate, graduate, and faculty researchers across computing and design disciplines.
-            </p>
-            <div className="footer-demo-callout">
-              <ShieldAlert size={14} className="flex-shrink-0 text-amber" />
-              <span>
-                Demonstration data is clearly labeled. Official records are marked with the Verified badge.
-              </span>
+              <div className="hcd-footer-brand-sub">IIIT Delhi · Human-Centered Design</div>
             </div>
           </div>
 
-          {/* COLUMN 2: Quick Links */}
-          <div className="footer-col">
-            <h4 className="footer-heading">Quick Links</h4>
-            <ul className="footer-links">
-              <li>
-                <button type="button" onClick={() => onSwitchTab('home')}>Home</button>
-              </li>
-              <li>
-                <button type="button" onClick={() => onSwitchTab('events')}>Events & Activities</button>
-              </li>
-              <li>
-                <button type="button" onClick={() => onSwitchTab('projects')}>Projects & Collaboration</button>
-              </li>
-              <li>
-                <button type="button" onClick={() => onSwitchTab('labs')}>Labs & Research</button>
-              </li>
-            </ul>
-          </div>
+          {/* Nav links */}
+          <nav className="hcd-footer-nav" aria-label="Footer navigation">
+            <span className="hcd-footer-nav-label">Explore</span>
+            <button
+              type="button"
+              className="hcd-footer-link"
+              onClick={() => onSwitchTab('info')}
+            >
+              <i className="bi bi-info-circle"></i>
+              HCD Information
+            </button>
+            <button
+              type="button"
+              className="hcd-footer-link"
+              onClick={() => onSwitchTab('events')}
+            >
+              <i className="bi bi-calendar3"></i>
+              Events &amp; Activities
+            </button>
+            <button
+              type="button"
+              className="hcd-footer-link"
+              onClick={() => onSwitchTab('projects')}
+            >
+              <i className="bi bi-briefcase"></i>
+              Projects &amp; Collaboration
+            </button>
+          </nav>
 
-          {/* COLUMN 3: Platform Information */}
-          <div className="footer-col">
-            <h4 className="footer-heading">Platform Info</h4>
-            <ul className="footer-links">
-              <li>
-                <button type="button" onClick={() => onSwitchTab('home')}>About HCD Connect</button>
-              </li>
-              <li>
-                <button type="button" onClick={() => onSwitchTab('projects')}>Research Opportunities</button>
-              </li>
-              <li>
-                <button type="button" onClick={() => onSwitchTab('projects')}>Collaboration Guidelines</button>
-              </li>
-              <li>
-                <a href="https://iiitd.ac.in" target="_blank" rel="noopener noreferrer">
-                  IIIT Delhi Main Portal <ExternalLink size={12} className="meta-inline-icon" />
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* COLUMN 4: Department Information */}
-          <div className="footer-col">
-            <h4 className="footer-heading">Department Information</h4>
-            <div className="footer-contact-item">
-              <MapPin size={15} className="contact-icon flex-shrink-0" />
-              <span>
-                Dept. of Human-Centered Design, R&D Building, IIIT-Delhi, Okhla Phase III, New Delhi - 110020
-              </span>
+          {/* Info block */}
+          <div className="hcd-footer-info">
+            <span className="hcd-footer-nav-label">Location</span>
+            <div className="hcd-footer-info-row">
+              <i className="bi bi-geo-alt-fill" style={{ color: 'var(--hcd-cyan)' }}></i>
+              <span>4th Floor, R&amp;D Building</span>
             </div>
-            <div className="footer-contact-item">
-              <Mail size={15} className="contact-icon flex-shrink-0" />
-              <a href="mailto:hcd-office@iiitd.ac.in" className="footer-contact-link">
-                hcd-office@iiitd.ac.in
-              </a>
+            <div className="hcd-footer-info-row">
+              <i className="bi bi-building" style={{ color: 'var(--hcd-cyan)' }}></i>
+              <span>IIIT Delhi, Okhla Phase III</span>
             </div>
-            <div className="footer-contact-item">
-              <Phone size={15} className="contact-icon flex-shrink-0" />
-              <span>+91-11-26907400</span>
+            <div className="hcd-footer-info-row">
+              <i className="bi bi-shield-check" style={{ color: '#10B981' }}></i>
+              <span>Verified badge-certified entries</span>
             </div>
           </div>
         </div>
 
-        {/* BOTTOM DIVIDER & COPYRIGHT */}
-        <div className="footer-bottom-bar">
-          <p>© {new Date().getFullYear()} Department of Human-Centered Design, IIIT Delhi. All rights reserved.</p>
-          <p className="footer-credits">Academic Research & Discovery Portal</p>
+        {/* BOTTOM ROW */}
+        <div className="hcd-footer-bottom">
+          <span className="hcd-footer-copy">© {year} IIIT Delhi HCD Connect. Research Platform.</span>
+          <div className="hcd-footer-status">
+            <span className="hcd-footer-live-dot"></span>
+            <span>Platform Active</span>
+          </div>
         </div>
+
       </div>
     </footer>
   );

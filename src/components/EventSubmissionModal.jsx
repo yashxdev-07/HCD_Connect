@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  X, 
-  Calendar, 
-  MapPin, 
-  Clock, 
-  User, 
-  Mail, 
-  FileText, 
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+import { Modal, Form, Row, Col, Button } from 'react-bootstrap';
 
 export default function EventSubmissionModal({ isOpen, onClose, onSubmitProposal, currentUser }) {
   const [formData, setFormData] = useState({
@@ -62,180 +52,167 @@ export default function EventSubmissionModal({ isOpen, onClose, onSubmitProposal
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content submission-modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div>
-            <h2>Propose an Academic Event</h2>
-            <p className="modal-subtitle">
-              Submit a workshop, guest speaker session, or reading circle for HCD department approval.
-            </p>
+    <Modal show={isOpen} onHide={onClose} size="lg" centered backdrop="static">
+      <Modal.Header closeButton className="border-bottom" style={{ borderColor: 'var(--hcd-border)' }}>
+        <div>
+          <Modal.Title className="fw-bold fs-5 d-flex align-items-center gap-2" style={{ color: 'var(--hcd-charcoal)' }}>
+            <i className="bi bi-calendar-plus" style={{ color: 'var(--hcd-cyan)' }}></i>
+            <span>Propose an Academic Event</span>
+          </Modal.Title>
+          <div className="small mt-1" style={{ color: 'var(--hcd-body)' }}>
+            Submit a workshop, guest speaker session, or reading circle for departmental review.
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <X size={20} />
-          </button>
         </div>
+      </Modal.Header>
 
+      <Modal.Body className="p-4">
         {submittedStatus ? (
-          <div className="submission-success-banner">
-            <CheckCircle size={44} className="text-emerald" />
-            <h3>Proposal Submitted Successfully!</h3>
-            <p>
-              Your proposal has been routed to the HCD Department Review Queue. The faculty coordinator will review your room booking and description.
+          <div className="text-center py-4">
+            <i className="bi bi-check-circle-fill text-success fs-1 mb-2 d-block"></i>
+            <h4 className="fw-bold" style={{ color: 'var(--hcd-charcoal)' }}>Proposal Submitted Successfully!</h4>
+            <p className="small mb-0" style={{ color: 'var(--hcd-body)' }}>
+              Your proposal has been routed to the HCD Review Queue. An administrator will review your room booking and schedule.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="submission-form">
-            <div className="form-group">
-              <label className="form-label">Event Title *</label>
-              <input
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Event Title *</Form.Label>
+              <Form.Control
                 type="text"
                 name="title"
                 required
                 placeholder="e.g. Generative AI Tools in UI/UX Research"
                 value={formData.title}
                 onChange={handleChange}
-                className="form-input"
               />
-            </div>
+            </Form.Group>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Event Category</label>
-                <select
+            <Row className="g-3 mb-3">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Event Category</Form.Label>
+                <Form.Select
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="form-select"
                 >
                   <option value="Workshop">Hands-on Workshop</option>
                   <option value="Guest Lecture">Guest Lecture</option>
                   <option value="Seminar">Research Seminar</option>
-                  <option value="Exhibition">Design Critique / Exhibition</option>
-                  <option value="Hackathon">Design Sprint / Hackathon</option>
-                </select>
-              </div>
+                  <option value="Critique">Capstone Critique</option>
+                  <option value="Hackathon">Designathon</option>
+                </Form.Select>
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">Proposed Date *</label>
-                <input
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Proposed Date *</Form.Label>
+                <Form.Control
                   type="date"
                   name="date"
                   required
                   value={formData.date}
                   onChange={handleChange}
-                  className="form-input"
                 />
-              </div>
-            </div>
+              </Col>
+            </Row>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Time Slot</label>
-                <input
+            <Row className="g-3 mb-3">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Timing</Form.Label>
+                <Form.Control
                   type="text"
                   name="time"
-                  placeholder="e.g. 02:00 PM - 04:00 PM IST"
                   value={formData.time}
                   onChange={handleChange}
-                  className="form-input"
                 />
-              </div>
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">Target Campus Venue / Room</label>
-                <input
-                  type="text"
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Venue / Room</Form.Label>
+                <Form.Select
                   name="room"
-                  placeholder="e.g. R&D A-301, Academic B-105, Online"
                   value={formData.room}
                   onChange={handleChange}
-                  className="form-input"
-                />
-              </div>
-            </div>
+                >
+                  <option value="Design Studio - Academic Building">Design Studio - Academic Building</option>
+                  <option value="Tinkerers' Lab - R&D 4th Floor">Tinkerers' Lab - R&D 4th Floor</option>
+                  <option value="C01 Seminar Hall - Old Academic">C01 Seminar Hall - Old Academic</option>
+                  <option value="Auditorium - Academic Complex">Auditorium - Academic Complex</option>
+                  <option value="Online / Google Meet">Online / Google Meet</option>
+                </Form.Select>
+              </Col>
+            </Row>
 
-            <div className="form-group">
-              <label className="form-label">Full Description & Agenda *</label>
-              <textarea
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Event Description & Agenda *</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
                 name="description"
-                rows="3"
                 required
-                placeholder="Detail the target audience, prerequisites, speaker background, and session learning outcomes..."
+                placeholder="Describe the goals, target participants, and software/hardware prerequisites..."
                 value={formData.description}
                 onChange={handleChange}
-                className="form-textarea"
               />
-            </div>
+            </Form.Group>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Faculty Sponsor / Mentor</label>
-                <select
+            <Row className="g-3 mb-3">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Faculty Sponsor / Advisor</Form.Label>
+                <Form.Control
+                  type="text"
                   name="facultySponsor"
                   value={formData.facultySponsor}
                   onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="Dr. Aman Parnami">Dr. Aman Parnami</option>
-                  <option value="Dr. Grace Eden">Dr. Grace Eden</option>
-                  <option value="Dr. Pushpendra Singh">Dr. Pushpendra Singh</option>
-                  <option value="Dr. Rajiv Ratn Shah">Dr. Rajiv Ratn Shah</option>
-                  <option value="HCD Student Guild">HCD Student Guild</option>
-                </select>
-              </div>
+                />
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">Expected Attendee Capacity</label>
-                <input
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Target Capacity</Form.Label>
+                <Form.Control
                   type="number"
                   name="capacity"
-                  min="5"
-                  max="300"
                   value={formData.capacity}
                   onChange={handleChange}
-                  className="form-input"
                 />
-              </div>
-            </div>
+              </Col>
+            </Row>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Organizer Name</label>
-                <input
+            <Row className="g-3 mb-4">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Organizer Name</Form.Label>
+                <Form.Control
                   type="text"
                   name="submittedBy"
                   placeholder="Your Name / Club Name"
                   value={formData.submittedBy}
                   onChange={handleChange}
-                  className="form-input"
                 />
-              </div>
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">Contact Email</label>
-                <input
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Contact Email</Form.Label>
+                <Form.Control
                   type="email"
                   name="submitterEmail"
                   placeholder="yourname@iiitd.ac.in"
                   value={formData.submitterEmail}
                   onChange={handleChange}
-                  className="form-input"
                 />
-              </div>
-            </div>
+              </Col>
+            </Row>
 
-            <div className="form-modal-actions">
-              <button type="button" onClick={onClose} className="btn btn-secondary">
+            <div className="d-flex justify-content-end gap-2 pt-2 border-top" style={{ borderColor: 'var(--hcd-border)' }}>
+              <Button variant="outline-secondary" onClick={onClose}>
                 Cancel
-              </button>
-              <button type="submit" className="btn btn-primary">
+              </Button>
+              <Button type="submit" variant="primary">
                 Submit for Approval
-              </button>
+              </Button>
             </div>
-          </form>
+          </Form>
         )}
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }

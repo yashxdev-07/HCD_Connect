@@ -1,20 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  CheckCircle, 
-  XCircle, 
-  Calendar, 
-  MapPin, 
-  Clock, 
-  User, 
-  Mail, 
-  AlertCircle, 
-  Filter, 
-  Layers, 
-  Briefcase,
-  ToggleLeft,
-  ToggleRight
-} from 'lucide-react';
+import { Row, Col, Card, Nav, Table, Badge, Button } from 'react-bootstrap';
 
 export default function AdminDashboard({
   submissions,
@@ -33,143 +18,213 @@ export default function AdminDashboard({
   const pendingSubmissions = submissions.filter(s => s.status === 'Pending');
 
   return (
-    <div className="admin-dashboard-container">
-      {/* Admin Header */}
-      <div className="admin-header-banner">
-        <div className="admin-header-left">
-          <div className="admin-shield-icon">
-            <ShieldCheck size={32} className="text-cyan" />
-          </div>
-          <div>
-            <h2>Department Administration Portal</h2>
-            <p>Review event proposals, moderate listings, and verify departmental labs & research.</p>
-          </div>
-        </div>
-        <div className="admin-stats-summary">
-          <div className="stat-pill">
-            <span className="stat-pill-num">{pendingSubmissions.length}</span>
-            <span className="stat-pill-label">Pending Reviews</span>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-pill-num">{events.length}</span>
-            <span className="stat-pill-label">Published Events</span>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-pill-num">{labs.length}</span>
-            <span className="stat-pill-label">Registered Labs</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Subnav */}
-      <div className="admin-subnav-tabs">
-        <button
-          className={`admin-subnav-btn ${adminSection === 'submissions' ? 'active' : ''}`}
-          onClick={() => setAdminSection('submissions')}
-        >
-          <Calendar size={16} />
-          <span>Pending Event Submissions ({pendingSubmissions.length})</span>
-        </button>
-        <button
-          className={`admin-subnav-btn ${adminSection === 'verify_events' ? 'active' : ''}`}
-          onClick={() => setAdminSection('verify_events')}
-        >
-          <CheckCircle size={16} />
-          <span>Events Audit ({events.length})</span>
-        </button>
-        <button
-          className={`admin-subnav-btn ${adminSection === 'verify_projects' ? 'active' : ''}`}
-          onClick={() => setAdminSection('verify_projects')}
-        >
-          <Briefcase size={16} />
-          <span>Projects Audit ({projects.length})</span>
-        </button>
-        <button
-          className={`admin-subnav-btn ${adminSection === 'verify_labs' ? 'active' : ''}`}
-          onClick={() => setAdminSection('verify_labs')}
-        >
-          <Layers size={16} />
-          <span>Labs Registry Audit ({labs.length})</span>
-        </button>
-      </div>
-
-      {/* SECTION 1: Pending Submissions */}
-      {adminSection === 'submissions' && (
-        <div className="admin-content-area">
-          <div className="section-title-row">
-            <div>
-              <h3>Event Proposals Awaiting Review</h3>
-              <p className="section-subtext">
-                Approved events are automatically published to the student Events feed.
-              </p>
+    <div className="py-4">
+      {/* 1. ADMIN HEADER BANNER */}
+      <Card 
+        className="text-white border-0 shadow-sm p-4 mb-4 rounded-3"
+        style={{ backgroundColor: 'var(--hcd-charcoal)' }}
+      >
+        <Row className="align-items-center g-3">
+          <Col md={7}>
+            <div className="d-flex align-items-center gap-3">
+              <div 
+                className="rounded-circle p-3 d-flex align-items-center justify-content-center"
+                style={{ backgroundColor: 'rgba(41, 182, 190, 0.2)', color: 'var(--hcd-cyan)', width: '56px', height: '56px' }}
+              >
+                <i className="bi bi-shield-check fs-2"></i>
+              </div>
+              <div>
+                <h3 className="text-white fw-bold mb-1">Department Administration Portal</h3>
+                <p className="small mb-0" style={{ color: '#D1D5DB' }}>
+                  Review event proposals, moderate listings, and verify departmental labs & research.
+                </p>
+              </div>
             </div>
+          </Col>
+
+          <Col md={5}>
+            <Row className="g-2 text-center">
+              <Col xs={4}>
+                <div 
+                  className="p-2 rounded border"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.15)' }}
+                >
+                  <div className="fs-4 fw-bold" style={{ color: 'var(--hcd-cyan)' }}>{pendingSubmissions.length}</div>
+                  <div className="small" style={{ fontSize: '0.7rem', color: '#D1D5DB' }}>Pending</div>
+                </div>
+              </Col>
+              <Col xs={4}>
+                <div 
+                  className="p-2 rounded border"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.15)' }}
+                >
+                  <div className="fs-4 fw-bold text-white">{events.length}</div>
+                  <div className="small" style={{ fontSize: '0.7rem', color: '#D1D5DB' }}>Events</div>
+                </div>
+              </Col>
+              <Col xs={4}>
+                <div 
+                  className="p-2 rounded border"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.15)' }}
+                >
+                  <div className="fs-4 fw-bold text-white">{labs.length}</div>
+                  <div className="small" style={{ fontSize: '0.7rem', color: '#D1D5DB' }}>Labs</div>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Card>
+
+      {/* 2. SUBNAV TABS */}
+      <Nav variant="tabs" className="mb-4 border-bottom" style={{ borderColor: 'var(--hcd-border)' }}>
+        <Nav.Item>
+          <Nav.Link 
+            active={adminSection === 'submissions'} 
+            onClick={() => setAdminSection('submissions')}
+            className="d-flex align-items-center gap-2 fw-semibold cursor-pointer"
+            style={{
+              color: adminSection === 'submissions' ? 'var(--hcd-cyan)' : 'var(--hcd-body)',
+              borderBottomColor: adminSection === 'submissions' ? 'var(--hcd-cyan)' : 'transparent',
+              borderBottomWidth: adminSection === 'submissions' ? '2px' : '1px'
+            }}
+          >
+            <i className="bi bi-inbox"></i>
+            <span>Pending Proposals</span>
+            {pendingSubmissions.length > 0 && (
+              <Badge bg="danger" pill>{pendingSubmissions.length}</Badge>
+            )}
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link 
+            active={adminSection === 'verify_events'} 
+            onClick={() => setAdminSection('verify_events')}
+            className="d-flex align-items-center gap-2 fw-semibold cursor-pointer"
+            style={{
+              color: adminSection === 'verify_events' ? 'var(--hcd-cyan)' : 'var(--hcd-body)',
+              borderBottomColor: adminSection === 'verify_events' ? 'var(--hcd-cyan)' : 'transparent',
+              borderBottomWidth: adminSection === 'verify_events' ? '2px' : '1px'
+            }}
+          >
+            <i className="bi bi-calendar-check"></i>
+            <span>Events Audit ({events.length})</span>
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link 
+            active={adminSection === 'verify_projects'} 
+            onClick={() => setAdminSection('verify_projects')}
+            className="d-flex align-items-center gap-2 fw-semibold cursor-pointer"
+            style={{
+              color: adminSection === 'verify_projects' ? 'var(--hcd-cyan)' : 'var(--hcd-body)',
+              borderBottomColor: adminSection === 'verify_projects' ? 'var(--hcd-cyan)' : 'transparent',
+              borderBottomWidth: adminSection === 'verify_projects' ? '2px' : '1px'
+            }}
+          >
+            <i className="bi bi-briefcase"></i>
+            <span>Projects Audit ({projects.length})</span>
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link 
+            active={adminSection === 'verify_labs'} 
+            onClick={() => setAdminSection('verify_labs')}
+            className="d-flex align-items-center gap-2 fw-semibold cursor-pointer"
+            style={{
+              color: adminSection === 'verify_labs' ? 'var(--hcd-cyan)' : 'var(--hcd-body)',
+              borderBottomColor: adminSection === 'verify_labs' ? 'var(--hcd-cyan)' : 'transparent',
+              borderBottomWidth: adminSection === 'verify_labs' ? '2px' : '1px'
+            }}
+          >
+            <i className="bi bi-layers"></i>
+            <span>Labs Registry Audit ({labs.length})</span>
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      {/* 3. CONTENT AREAS */}
+      {/* SECTION 1: Submissions Queue */}
+      {adminSection === 'submissions' && (
+        <div>
+          <div className="mb-3">
+            <h5 className="fw-bold mb-1" style={{ color: 'var(--hcd-charcoal)' }}>Event Proposals Awaiting Review</h5>
+            <p className="small mb-0" style={{ color: 'var(--hcd-body)' }}>
+              Approved events are instantly published to the student Events feed.
+            </p>
           </div>
 
           {pendingSubmissions.length === 0 ? (
-            <div className="empty-state-box">
-              <CheckCircle size={44} className="text-emerald" />
-              <h4>All caught up!</h4>
-              <p>There are no pending submissions in the queue.</p>
-              <button 
-                onClick={() => onSwitchTab('events')}
-                className="btn btn-secondary btn-sm"
-                style={{ marginTop: '0.75rem' }}
-              >
-                Go to Public Events Page
-              </button>
-            </div>
+            <Card className="text-center p-5 border bg-white" style={{ borderColor: 'var(--hcd-border)' }}>
+              <i className="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+              <h5 className="fw-bold" style={{ color: 'var(--hcd-charcoal)' }}>All caught up!</h5>
+              <p className="small mb-3" style={{ color: 'var(--hcd-body)' }}>There are no pending submissions in the queue.</p>
+              <div>
+                <Button variant="outline-primary" size="sm" onClick={() => onSwitchTab('events')}>
+                  Go to Public Events Page
+                </Button>
+              </div>
+            </Card>
           ) : (
-            <div className="submissions-list">
+            <div className="d-flex flex-column gap-3">
               {pendingSubmissions.map((sub) => (
-                <div key={sub.id} className="submission-card">
-                  <div className="sub-header-bar">
-                    <span className="badge badge-category">{sub.category}</span>
-                    <span className="sub-timestamp">Submitted: {sub.timestamp}</span>
+                <Card key={sub.id} className="border shadow-sm p-4 bg-white" style={{ borderColor: 'var(--hcd-border)' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                    <Badge className="badge-category">
+                      {sub.category}
+                    </Badge>
+                    <span className="small" style={{ color: 'var(--hcd-body)' }}>Submitted: {sub.timestamp}</span>
                   </div>
 
-                  <h4 className="sub-title">{sub.title}</h4>
-                  <p className="sub-desc">{sub.description}</p>
+                  <h5 className="fw-bold mb-2" style={{ color: 'var(--hcd-charcoal)' }}>{sub.title}</h5>
+                  <p className="small mb-3" style={{ color: 'var(--hcd-body)', lineHeight: 1.6 }}>{sub.description}</p>
 
-                  <div className="sub-meta-grid">
-                    <div className="sub-meta-item">
-                      <Calendar size={14} className="text-muted" />
-                      <span>{sub.date}</span>
-                    </div>
-                    <div className="sub-meta-item">
-                      <Clock size={14} className="text-muted" />
-                      <span>{sub.time}</span>
-                    </div>
-                    <div className="sub-meta-item">
-                      <MapPin size={14} className="text-muted" />
-                      <span>{sub.room}</span>
-                    </div>
-                    <div className="sub-meta-item">
-                      <User size={14} className="text-muted" />
-                      <span>By: {sub.submittedBy} ({sub.submitterEmail})</span>
-                    </div>
+                  <div className="p-3 rounded border mb-3" style={{ backgroundColor: 'var(--hcd-light-bg)', borderColor: 'var(--hcd-border)' }}>
+                    <Row className="g-2 small" style={{ color: 'var(--hcd-charcoal)' }}>
+                      <Col sm={6} md={3}>
+                        <i className="bi bi-calendar3 me-2" style={{ color: 'var(--hcd-cyan)' }}></i>
+                        <span>{sub.date}</span>
+                      </Col>
+                      <Col sm={6} md={3}>
+                        <i className="bi bi-clock me-2" style={{ color: 'var(--hcd-cyan)' }}></i>
+                        <span>{sub.time}</span>
+                      </Col>
+                      <Col sm={6} md={3}>
+                        <i className="bi bi-geo-alt me-2" style={{ color: 'var(--hcd-cyan)' }}></i>
+                        <span>{sub.room}</span>
+                      </Col>
+                      <Col sm={6} md={3}>
+                        <i className="bi bi-person me-2" style={{ color: 'var(--hcd-cyan)' }}></i>
+                        <span>{sub.submittedBy}</span>
+                      </Col>
+                    </Row>
                   </div>
 
-                  <div className="sub-sponsor-note">
+                  <div className="small mb-3" style={{ color: 'var(--hcd-body)' }}>
                     <strong>Faculty Sponsor: </strong> {sub.facultySponsor || 'None Specified'}
                   </div>
 
-                  <div className="sub-actions">
-                    <button
+                  <div className="d-flex gap-2">
+                    <Button 
+                      variant="success" 
+                      size="sm"
                       onClick={() => onApproveSubmission(sub.id)}
-                      className="btn btn-success btn-sm"
+                      className="d-inline-flex align-items-center gap-1"
                     >
-                      <CheckCircle size={15} />
-                      <span>Approve & Publish to Events</span>
-                    </button>
-                    <button
+                      <i className="bi bi-check-lg"></i>
+                      <span>Approve & Publish</span>
+                    </Button>
+                    <Button 
+                      variant="danger" 
+                      size="sm"
                       onClick={() => onRejectSubmission(sub.id)}
-                      className="btn btn-danger btn-sm"
+                      className="d-inline-flex align-items-center gap-1"
                     >
-                      <XCircle size={15} />
+                      <i className="bi bi-x-lg"></i>
                       <span>Reject Proposal</span>
-                    </button>
+                    </Button>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           )}
@@ -178,172 +233,167 @@ export default function AdminDashboard({
 
       {/* SECTION 2: Events Audit */}
       {adminSection === 'verify_events' && (
-        <div className="admin-content-area">
-          <div className="section-title-row">
-            <div>
-              <h3>Events Verification & Visibility</h3>
-              <p className="section-subtext">
-                Toggle verification badges for published departmental events.
-              </p>
-            </div>
+        <Card className="border shadow-sm p-0 overflow-hidden bg-white" style={{ borderColor: 'var(--hcd-border)', borderRadius: 'var(--hcd-radius-lg)' }}>
+          <div className="p-3 border-bottom" style={{ backgroundColor: 'var(--hcd-light-bg)', borderColor: 'var(--hcd-border)' }}>
+            <h6 className="fw-bold mb-0" style={{ color: 'var(--hcd-charcoal)' }}>Events Verification & Visibility</h6>
           </div>
-
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
+          <div className="table-responsive">
+            <Table hover align="middle" className="mb-0 small">
+              <thead style={{ backgroundColor: 'var(--hcd-light-bg)' }}>
                 <tr>
-                  <th>Event Title</th>
-                  <th>Category</th>
-                  <th>Date & Room</th>
-                  <th>Faculty Lead</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Event Title</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Category</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Date & Room</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Faculty Lead</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Status</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {events.map((evt) => (
                   <tr key={evt.id}>
+                    <td className="fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>{evt.title}</td>
                     <td>
-                      <strong>{evt.title}</strong>
+                      <Badge className="badge-category">
+                        {evt.category}
+                      </Badge>
                     </td>
                     <td>
-                      <span className="badge badge-category">{evt.category}</span>
+                      <div style={{ color: 'var(--hcd-charcoal)' }}>{evt.date}</div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--hcd-body)' }}>{evt.room}</span>
                     </td>
-                    <td>
-                      <div>{evt.date}</div>
-                      <small className="text-muted">{evt.room}</small>
-                    </td>
-                    <td>{evt.facultyContact?.name || evt.speaker}</td>
+                    <td style={{ color: 'var(--hcd-charcoal)' }}>{evt.facultyContact?.name || evt.speaker}</td>
                     <td>
                       {evt.isVerified ? (
-                        <span className="badge badge-verified">Verified</span>
+                        <Badge bg="success-subtle" className="text-success-emphasis border border-success-subtle">Verified</Badge>
                       ) : (
-                        <span className="badge badge-demo">Demo Data</span>
+                        <Badge bg="warning-subtle" className="text-warning-emphasis border border-warning-subtle">Demo Data</Badge>
                       )}
                     </td>
                     <td>
-                      <button
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
                         onClick={() => onToggleEventVerification(evt.id)}
-                        className="btn btn-secondary btn-sm"
                       >
-                        {evt.isVerified ? 'Mark as Demo' : 'Mark as Verified'}
-                      </button>
+                        {evt.isVerified ? 'Mark Demo' : 'Verify'}
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* SECTION 3: Projects Audit */}
       {adminSection === 'verify_projects' && (
-        <div className="admin-content-area">
-          <div className="section-title-row">
-            <div>
-              <h3>Research Projects Audit</h3>
-              <p className="section-subtext">Manage verification flags for capstone and faculty research.</p>
-            </div>
+        <Card className="border shadow-sm p-0 overflow-hidden bg-white" style={{ borderColor: 'var(--hcd-border)', borderRadius: 'var(--hcd-radius-lg)' }}>
+          <div className="p-3 border-bottom" style={{ backgroundColor: 'var(--hcd-light-bg)', borderColor: 'var(--hcd-border)' }}>
+            <h6 className="fw-bold mb-0" style={{ color: 'var(--hcd-charcoal)' }}>Research Projects Audit</h6>
           </div>
-
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
+          <div className="table-responsive">
+            <Table hover align="middle" className="mb-0 small">
+              <thead style={{ backgroundColor: 'var(--hcd-light-bg)' }}>
                 <tr>
-                  <th>Project Name</th>
-                  <th>Supervisor</th>
-                  <th>Research Domain</th>
-                  <th>Collab Status</th>
-                  <th>Verification</th>
-                  <th>Action</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Project Name</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Supervisor</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Domain</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Collab Status</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Status</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {projects.map((proj) => (
                   <tr key={proj.id}>
-                    <td><strong>{proj.title}</strong></td>
-                    <td>{proj.supervisor}</td>
-                    <td>{proj.researchArea}</td>
+                    <td className="fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>{proj.title}</td>
+                    <td style={{ color: 'var(--hcd-charcoal)' }}>{proj.supervisor}</td>
                     <td>
-                      <span className={`badge badge-${proj.status.toLowerCase()}`}>{proj.status}</span>
+                      <Badge className="badge-category">
+                        {proj.researchArea}
+                      </Badge>
+                    </td>
+                    <td>
+                      <Badge bg={proj.status === 'Open' ? 'success' : proj.status === 'Limited' ? 'warning' : 'secondary'}>
+                        {proj.status}
+                      </Badge>
                     </td>
                     <td>
                       {proj.isVerified ? (
-                        <span className="badge badge-verified">Verified</span>
+                        <Badge bg="success-subtle" className="text-success-emphasis border border-success-subtle">Verified</Badge>
                       ) : (
-                        <span className="badge badge-demo">Demo Data</span>
+                        <Badge bg="warning-subtle" className="text-warning-emphasis border border-warning-subtle">Demo Data</Badge>
                       )}
                     </td>
                     <td>
-                      <button
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
                         onClick={() => onToggleProjectVerification(proj.id)}
-                        className="btn btn-secondary btn-sm"
                       >
-                        {proj.isVerified ? 'Mark as Demo' : 'Mark as Verified'}
-                      </button>
+                        {proj.isVerified ? 'Mark Demo' : 'Verify'}
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* SECTION 4: Labs Registry Audit */}
       {adminSection === 'verify_labs' && (
-        <div className="admin-content-area">
-          <div className="section-title-row">
-            <div>
-              <h3>Department Research Labs Audit</h3>
-              <p className="section-subtext">Audit official physical spaces vs student incubator proposals.</p>
-            </div>
+        <Card className="border shadow-sm p-0 overflow-hidden bg-white" style={{ borderColor: 'var(--hcd-border)', borderRadius: 'var(--hcd-radius-lg)' }}>
+          <div className="p-3 border-bottom" style={{ backgroundColor: 'var(--hcd-light-bg)', borderColor: 'var(--hcd-border)' }}>
+            <h6 className="fw-bold mb-0" style={{ color: 'var(--hcd-charcoal)' }}>Department Research Labs Audit</h6>
           </div>
-
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
+          <div className="table-responsive">
+            <Table hover align="middle" className="mb-0 small">
+              <thead style={{ backgroundColor: 'var(--hcd-light-bg)' }}>
                 <tr>
-                  <th>Lab Code & Name</th>
-                  <th>Director</th>
-                  <th>Location</th>
-                  <th>Equipment Count</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Lab Code & Name</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Director</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Room</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Equipment Count</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Status</th>
+                  <th style={{ color: 'var(--hcd-charcoal)' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {labs.map((lab) => (
                   <tr key={lab.id}>
                     <td>
-                      <div><strong>{lab.name}</strong></div>
-                      <small className="lab-code-badge">{lab.code}</small>
+                      <div className="fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>{lab.name}</div>
+                      <Badge className="font-monospace mt-1 text-white" style={{ backgroundColor: 'var(--hcd-charcoal)' }}>{lab.code}</Badge>
                     </td>
-                    <td>{lab.director}</td>
-                    <td>{lab.room}</td>
-                    <td>{lab.equipment.length} Items Listed</td>
+                    <td style={{ color: 'var(--hcd-charcoal)' }}>{lab.director}</td>
+                    <td style={{ color: 'var(--hcd-charcoal)' }}>{lab.room}</td>
+                    <td style={{ color: 'var(--hcd-body)' }}>{lab.equipment.length} Items Listed</td>
                     <td>
                       {lab.isVerified ? (
-                        <span className="badge badge-verified">Verified Facility</span>
+                        <Badge bg="success-subtle" className="text-success-emphasis border border-success-subtle">Verified Facility</Badge>
                       ) : (
-                        <span className="badge badge-demo">Demo Data</span>
+                        <Badge bg="warning-subtle" className="text-warning-emphasis border border-warning-subtle">Demo Data</Badge>
                       )}
                     </td>
                     <td>
-                      <button
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
                         onClick={() => onToggleLabVerification(lab.id)}
-                        className="btn btn-secondary btn-sm"
                       >
-                        {lab.isVerified ? 'Mark as Demo' : 'Verify Facility'}
-                      </button>
+                        {lab.isVerified ? 'Mark Demo' : 'Verify'}
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

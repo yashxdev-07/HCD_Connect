@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  X, 
-  Send, 
-  CheckCircle, 
-  User, 
-  Mail, 
-  Hash, 
-  Link as LinkIcon, 
-  FileText,
-  Briefcase
-} from 'lucide-react';
+import { Modal, Form, Row, Col, Button } from 'react-bootstrap';
 
 export default function CollabModal({ isOpen, onClose, project, currentUser }) {
   const [formData, setFormData] = useState({
@@ -19,7 +9,6 @@ export default function CollabModal({ isOpen, onClose, project, currentUser }) {
     year: 'B.Tech CS+D 3rd Year',
     portfolioUrl: '',
     statement: '',
-    hoursPerWeek: '10-12 hrs/week',
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -40,87 +29,73 @@ export default function CollabModal({ isOpen, onClose, project, currentUser }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content collab-modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div>
-            <h2>Apply to Collaborate</h2>
-            <p className="modal-subtitle">
-              Express interest in joining <strong>{project.title}</strong> under {project.supervisor}.
-            </p>
+    <Modal show={isOpen} onHide={onClose} size="lg" centered backdrop="static">
+      <Modal.Header closeButton className="border-bottom" style={{ borderColor: 'var(--hcd-border)' }}>
+        <div>
+          <Modal.Title className="fw-bold fs-5 d-flex align-items-center gap-2" style={{ color: 'var(--hcd-charcoal)' }}>
+            <i className="bi bi-person-lines-fill" style={{ color: 'var(--hcd-cyan)' }}></i>
+            <span>Apply to Collaborate</span>
+          </Modal.Title>
+          <div className="small mt-1" style={{ color: 'var(--hcd-body)' }}>
+            Express interest in joining <strong style={{ color: 'var(--hcd-charcoal)' }}>{project.title}</strong> under {project.supervisor}.
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <X size={20} />
-          </button>
         </div>
+      </Modal.Header>
 
+      <Modal.Body className="p-4">
         {submitted ? (
-          <div className="submission-success-banner">
-            <CheckCircle size={44} className="text-emerald" />
-            <h3>Application Dispatched!</h3>
-            <p>
-              Your profile and statement have been forwarded to <strong>{project.supervisorEmail}</strong>. 
-              The project leads will review your portfolio and reach out regarding interview slots.
+          <div className="text-center py-4">
+            <i className="bi bi-send-check-fill text-success fs-1 mb-2 d-block"></i>
+            <h4 className="fw-bold" style={{ color: 'var(--hcd-charcoal)' }}>Application Dispatched!</h4>
+            <p className="small mb-0" style={{ color: 'var(--hcd-body)' }}>
+              Your profile has been forwarded to <strong>{project.supervisorEmail}</strong>. The principal investigator will review your submission and contact you.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="collab-form">
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Student Name *</label>
-                <div className="input-with-icon">
-                  <User size={15} className="input-icon" />
-                  <input
-                    type="text"
-                    name="studentName"
-                    required
-                    value={formData.studentName}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
+          <Form onSubmit={handleSubmit}>
+            <Row className="g-3 mb-3">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Student Name *</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="studentName"
+                  required
+                  value={formData.studentName}
+                  onChange={handleChange}
+                />
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">IIITD Email *</label>
-                <div className="input-with-icon">
-                  <Mail size={15} className="input-icon" />
-                  <input
-                    type="email"
-                    name="studentEmail"
-                    required
-                    value={formData.studentEmail}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
-            </div>
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>IIITD Email *</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="studentEmail"
+                  required
+                  value={formData.studentEmail}
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label">Roll Number *</label>
-                <div className="input-with-icon">
-                  <Hash size={15} className="input-icon" />
-                  <input
-                    type="text"
-                    name="rollNo"
-                    required
-                    placeholder="e.g. 2024HCD504"
-                    value={formData.rollNo}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
+            <Row className="g-3 mb-3">
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Roll Number *</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="rollNo"
+                  required
+                  placeholder="e.g. 2024HCD504"
+                  value={formData.rollNo}
+                  onChange={handleChange}
+                />
+              </Col>
 
-              <div className="form-group">
-                <label className="form-label">Current Cohort / Standing</label>
-                <select
+              <Col md={6}>
+                <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Current Standing</Form.Label>
+                <Form.Select
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  className="form-select"
                 >
                   <option value="B.Tech CS+D 2nd Year">B.Tech CS+D 2nd Year</option>
                   <option value="B.Tech CS+D 3rd Year">B.Tech CS+D 3rd Year</option>
@@ -128,50 +103,46 @@ export default function CollabModal({ isOpen, onClose, project, currentUser }) {
                   <option value="M.Des 1st Year">M.Des 1st Year</option>
                   <option value="M.Des 2nd Year">M.Des 2nd Year</option>
                   <option value="Ph.D. Scholar">Ph.D. Scholar</option>
-                </select>
-              </div>
-            </div>
+                </Form.Select>
+              </Col>
+            </Row>
 
-            <div className="form-group">
-              <label className="form-label">Portfolio / GitHub / Figma Link</label>
-              <div className="input-with-icon">
-                <LinkIcon size={15} className="input-icon" />
-                <input
-                  type="url"
-                  name="portfolioUrl"
-                  placeholder="https://behance.net/yourprofile or https://github.com/..."
-                  value={formData.portfolioUrl}
-                  onChange={handleChange}
-                  className="form-input"
-                />
-              </div>
-            </div>
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Portfolio / GitHub / Figma Link</Form.Label>
+              <Form.Control
+                type="url"
+                name="portfolioUrl"
+                placeholder="https://github.com/... or https://behance.net/..."
+                value={formData.portfolioUrl}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-            <div className="form-group">
-              <label className="form-label">Why do you want to work on this project? *</label>
-              <textarea
+            <Form.Group className="mb-4">
+              <Form.Label className="small fw-semibold" style={{ color: 'var(--hcd-charcoal)' }}>Statement of Interest & Relevant Coursework *</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
                 name="statement"
-                rows="3"
                 required
-                placeholder="Highlight your experience with relevant tools (e.g. Unity, React, physical hardware), past coursework, and motivation..."
+                placeholder="Describe your background with relevant tools (e.g. Unity, React, physical computing), and what you hope to achieve..."
                 value={formData.statement}
                 onChange={handleChange}
-                className="form-textarea"
               />
-            </div>
+            </Form.Group>
 
-            <div className="form-modal-actions">
-              <button type="button" onClick={onClose} className="btn btn-secondary">
+            <div className="d-flex justify-content-end gap-2 pt-2 border-top" style={{ borderColor: 'var(--hcd-border)' }}>
+              <Button variant="outline-secondary" onClick={onClose}>
                 Cancel
-              </button>
-              <button type="submit" className="btn btn-accent">
-                <Send size={14} />
+              </Button>
+              <Button type="submit" variant="primary" className="d-inline-flex align-items-center gap-1">
+                <i className="bi bi-send"></i>
                 <span>Submit Expression of Interest</span>
-              </button>
+              </Button>
             </div>
-          </form>
+          </Form>
         )}
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }

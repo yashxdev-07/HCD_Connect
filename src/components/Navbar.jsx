@@ -1,249 +1,85 @@
-import React, { useState } from 'react';
-import { 
-  Home, 
-  Calendar, 
-  Briefcase, 
-  Layers, 
-  Search, 
-  PlusCircle, 
-  LogIn, 
-  LogOut, 
-  ShieldCheck, 
-  User, 
-  Menu, 
-  X,
-  GraduationCap
-} from 'lucide-react';
+import React from 'react';
 
-export default function Navbar({ 
-  activeTab, 
-  setActiveTab, 
-  currentUser, 
-  onOpenAuth, 
-  onLogout, 
-  onOpenSubmitEvent,
-  pendingSubmissionsCount,
+export default function HcdNavbar({
+  _activeTab,
+  setActiveTab,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  isMobile
 }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navLinks = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'events', label: 'Events', icon: Calendar },
-    { id: 'projects', label: 'Projects', icon: Briefcase },
-    { id: 'labs', label: 'Labs & Research', icon: Layers },
-  ];
-
-  const handleNavClick = (tabId) => {
-    setActiveTab(tabId);
-    setMobileMenuOpen(false);
-  };
-
   return (
-    <header className="navbar-wrapper">
-      <div className="container navbar-inner">
-        {/* LEFT: Academic Brand */}
-        <div className="navbar-brand" onClick={() => handleNavClick('home')}>
-          <div className="brand-logo-icon">
-            <GraduationCap size={20} className="logo-svg" />
-          </div>
-          <div className="brand-text-block">
-            <div className="brand-title">
-              HCD <span className="brand-title-accent">CONNECT</span>
-            </div>
-            <div className="brand-subtitle">
-              IIIT Delhi · Human-Centered Design
-            </div>
-          </div>
-        </div>
+    <header className="hcd-topbar" role="banner">
+      <div className="hcd-topbar-inner">
 
-        {/* CENTER: Navigation Links with Visible Gaps */}
-        <nav className="nav-desktop">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = activeTab === link.id;
-            return (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
-              >
-                <Icon size={16} className="nav-icon" />
-                <span className="nav-label">{link.label}</span>
-              </button>
-            );
-          })}
-
-          {currentUser && currentUser.role === 'admin' && (
-            <button
-              onClick={() => handleNavClick('admin')}
-              className={`nav-link ${activeTab === 'admin' ? 'nav-link-active' : ''} nav-link-admin`}
-            >
-              <ShieldCheck size={16} className="nav-icon" />
-              <span className="nav-label">Admin Hub</span>
-              {pendingSubmissionsCount > 0 && (
-                <span className="nav-counter-badge">{pendingSubmissionsCount}</span>
-              )}
-            </button>
-          )}
-        </nav>
-
-        {/* RIGHT: Search, Submit Event, Auth */}
-        <div className="nav-actions-desktop">
-          {/* Quick Search */}
-          <div className="header-search-box">
-            <Search size={14} className="header-search-icon" />
-            <input
-              type="text"
-              placeholder="Search platform..."
-              value={searchQuery || ''}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                if (activeTab === 'home' && e.target.value.trim() !== '') {
-                  setActiveTab('projects');
-                }
-              }}
-              className="header-search-input"
-            />
-          </div>
-
-          <button 
-            className="btn btn-navy btn-sm"
-            onClick={onOpenSubmitEvent}
-            title="Propose an academic event, seminar, or workshop"
-          >
-            <PlusCircle size={14} />
-            <span>Submit Event</span>
-          </button>
-
-          {currentUser ? (
-            <div className="user-profile-menu">
-              <div className="user-info-chip">
-                <span className="user-avatar-circle">{currentUser.avatar || 'U'}</span>
-                <div className="user-text-meta">
-                  <span className="user-name">{currentUser.name.split(' ')[0]}</span>
-                  <span className="user-role-tag">
-                    {currentUser.role === 'admin' ? 'Admin' : 'Student'}
-                  </span>
-                </div>
-              </div>
-              <button 
-                onClick={onLogout} 
-                className="btn-icon-logout"
-                title="Sign Out"
-              >
-                <LogOut size={15} />
-              </button>
-            </div>
-          ) : (
-            <button 
-              className="btn btn-primary btn-sm"
-              onClick={onOpenAuth}
-            >
-              <LogIn size={14} />
-              <span>Sign In / Register</span>
-            </button>
-          )}
-        </div>
-
-        {/* Mobile Hamburger Button */}
-        <button 
-          className="mobile-hamburger-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle navigation menu"
+        {/* LEFT: Brand */}
+        <div
+          className="hcd-brand"
+          onClick={() => setActiveTab(isMobile ? 'home' : 'info')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveTab(isMobile ? 'home' : 'info'); }}
+          aria-label="Go to HCD Home"
         >
-          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="nav-mobile-drawer">
-          <div className="container mobile-drawer-inner">
-            <div className="mobile-search-row">
-              <Search size={16} className="text-light" />
-              <input
-                type="text"
-                placeholder="Search events, projects, labs..."
-                value={searchQuery || ''}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="mobile-search-input"
-              />
+          <div className="hcd-brand-icon" aria-hidden="true">
+            <i className="bi bi-mortarboard-fill"></i>
+          </div>
+          <div className="hcd-brand-text">
+            <div className="hcd-brand-name">
+              <span>HCD</span><span className="hcd-brand-accent">CONNECT</span>
             </div>
-
-            <div className="mobile-nav-links">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = activeTab === link.id;
-                return (
-                  <button
-                    key={link.id}
-                    onClick={() => handleNavClick(link.id)}
-                    className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-                  >
-                    <Icon size={18} />
-                    <span>{link.label}</span>
-                  </button>
-                );
-              })}
-
-              {currentUser && currentUser.role === 'admin' && (
-                <button
-                  onClick={() => handleNavClick('admin')}
-                  className={`mobile-nav-item ${activeTab === 'admin' ? 'active' : ''}`}
-                >
-                  <ShieldCheck size={18} />
-                  <span>Admin Hub ({pendingSubmissionsCount} pending)</span>
-                </button>
-              )}
-            </div>
-
-            <div className="mobile-drawer-footer">
-              <button 
-                className="btn btn-navy btn-full"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenSubmitEvent();
-                }}
-              >
-                <PlusCircle size={15} />
-                <span>Submit Event Proposal</span>
-              </button>
-
-              {currentUser ? (
-                <div className="mobile-user-status">
-                  <div className="user-info-chip">
-                    <span className="user-avatar-circle">{currentUser.avatar || 'U'}</span>
-                    <span>{currentUser.name} ({currentUser.role})</span>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onLogout();
-                    }}
-                    className="btn btn-danger btn-sm"
-                  >
-                    <LogOut size={14} />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  className="btn btn-primary btn-full"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAuth();
-                  }}
-                >
-                  <LogIn size={15} />
-                  <span>Sign In / Student Register</span>
-                </button>
-              )}
+            <div className="hcd-brand-sub">
+              <span className="hcd-brand-badge">IIIT Delhi</span>
+              <span className="d-none d-sm-inline hcd-brand-caption">Research Hub</span>
             </div>
           </div>
         </div>
-      )}
+
+        {/* CENTER: Search */}
+        <div className="hcd-search-wrap d-none d-md-block">
+          <div className="hcd-search-inner">
+            <i className="bi bi-search hcd-search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              className="hcd-search-input"
+              placeholder="Search events, projects, labs, skills..."
+              value={searchQuery || ''}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Global platform search"
+              id="global-search-input"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="hcd-search-clear"
+                onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
+              >
+                <i className="bi bi-x-circle-fill"></i>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: Badges & Actions */}
+        <div className="hcd-topbar-right">
+          {/* Location pill */}
+          <span className="hcd-location-pill d-none d-md-inline-flex">
+            <i className="bi bi-geo-alt-fill" aria-hidden="true"></i>
+            <span>R&amp;D Building · 4th Floor</span>
+          </span>
+          <span className="hcd-location-pill d-inline-flex d-md-none" style={{ '--pill-color': '#115E59', '--pill-bg': '#CDEEF1' }}>
+            <i className="bi bi-geo-alt-fill" aria-hidden="true"></i>
+            <span>4F · R&amp;D</span>
+          </span>
+
+          {/* Status dot */}
+          <div className="hcd-topbar-status d-none d-lg-flex">
+            <span className="status-live-dot"></span>
+            <span className="hcd-topbar-status-text">Live</span>
+          </div>
+        </div>
+
+      </div>
     </header>
   );
 }
